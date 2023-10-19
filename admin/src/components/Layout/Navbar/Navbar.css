@@ -1,0 +1,73 @@
+.navbar {
+  height: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  box-shadow: #32325d05 0 2px 5px -1px, #0000000d 0 1px 3px -1px !important;
+  font-size: 16px;
+}
+.toolbar-navbar {
+  padding: 0;
+  padding-left: 12px !important;
+  background-image: url(https://cdn.pixabay.com/photo/2017/03/11/20/51/bubbles-2135831_1280.jpg);
+  position: relative;
+  color: #fff;
+}
+.menu-icon {
+  font-weight: 800 !important;
+  cursor: pointer !important;
+  padding: 0 16px 0 0 !important;
+  font-size: 40px !important;
+}
+.navbar-name-content-center {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  width: 100% !important;
+}
+.navbar-title {
+  margin: 4px !important;
+  font-weight: 900 !important;
+  font-size: 26px !important;
+  z-index: 1;
+}
+.navbar-name {
+  margin: 4px !important;
+  font-weight: 700 !important;
+  font-size: 20px !important;
+  z-index: 1 !important;
+  background-color: rgba(255, 255, 255, 0.7);
+  border: 1px solid white !important;
+  border-radius: 6px !important;
+  padding: 6px !important;
+}
+.loggedInName {
+  filter: contrast(170%) brightness(120%) blur(0px)
+    drop-shadow(8px 8px 10px gray) hue-rotate(0deg) !important;
+  color: brown !important;
+  /* color: #ff4382 !important; */
+  /* mix-blend-mode: darken; */
+}
+.loggedInRole {
+  color: black !important;
+  /* color: #cacaca !important; */
+}
+.appbar {
+  background: black !important;
+}
+@media (max-width: 600px) {
+  .menu-icon {
+    display: none !important;
+  }
+  .navbar-title {
+    font-size: 22px !important;
+  }
+  .navbar-name {
+    font-size: 15px !important;
+  }
+}
+@media (max-width: 350px) {
+  .navbar-name {
+    display: none !important;
+  }
+}
