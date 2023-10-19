@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const User = new mongoose.Schema({
+const Admin = new mongoose.Schema({
      firstname: { type: String, required: true, trim: true },
      lastname: { type: String, required: true, trim: true },
      email: { type: String, required: true, unique: true },
@@ -12,5 +12,5 @@ const User = new mongoose.Schema({
      otpExpiry: { Date }
 }, { timestamps: true });
 
-const UserModel = mongoose.model('user', User);
+const UserModel = mongoose.model('admin', Admin);
 module.exports = UserModel;

@@ -15,7 +15,10 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 const path = require('path');
+
 const User = require('./models/UserSchema');
+const Admin = require('./models/AdminSchema');
+
 app.use("/images", express.static(path.join(__dirname, 'masterImages')));
 // const fs = require('fs');
 
@@ -44,58 +47,7 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage });
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-// Register ADMIN API
-app.post('/admin-sign-up', upload.single('picture'), async (req, res) => {
-     try {
-          const { firstname, lastname, email, phone, password } = req.body;
-          const preregistedUser = await User.findOne({ email: email });
-          if (!!preregistedUser) {
-               return res.status(201).send({
-                    message: 'User Already Exists',
-                    success: false,
-                    data: null,
-               });
-          } else {
-               const hashedPassword = await bcrypt.hash(password, 10);
-               const newUser = new User({
-                    firstname,
-                    lastname,
-                    email,
-                    phone,
-                    password: hashedPassword,
-                    role: "admin",
-                    picture: `images/${req?.file?.filename}`,
-               });
-               await newUser.save();
-               return res.status(200).send({
-                    message: 'Admin Registered Successfully😉',
-                    data: newUser,
-                    success: true
-               });
-          }
-     } catch (error) {
-          console.error('Error registering user:', error.message);
-          return res.status(500).send({
-               error: 'Internal server error',
-               error: error.message
-          });
-     }
-});
-
-// Register API
+//User Register API
 app.post('/sign-up', upload.single('picture'), async (req, res) => {
      try {
           const { firstname, lastname, email, phone, password } = req.body;
@@ -133,7 +85,45 @@ app.post('/sign-up', upload.single('picture'), async (req, res) => {
      }
 });
 
-// Login API
+// Register ADMIN API
+app.post('/admin-sign-up', upload.single('picture'), async (req, res) => {
+     try {
+          const { firstname, lastname, email, phone, password } = req.body;
+          const preregistedAdmin = await Admin.findOne({ email: email });
+          if (!!preregistedAdmin) {
+               return res.status(201).send({
+                    message: 'User Already Exists',
+                    success: false,
+                    data: null,
+               });
+          } else {
+               const hashedPassword = await bcrypt.hash(password, 10);
+               const newAdmin = new Admin({
+                    firstname,
+                    lastname,
+                    email,
+                    phone,
+                    password: hashedPassword,
+                    role: "admin",
+                    picture: `images/${req?.file?.filename}`,
+               });
+               await newAdmin.save();
+               return res.status(200).send({
+                    message: 'Admin Registered Successfully😉',
+                    data: newAdmin,
+                    success: true
+               });
+          }
+     } catch (error) {
+          console.error('Error registering user:', error.message);
+          return res.status(500).send({
+               error: 'Internal server error',
+               error: error.message
+          });
+     }
+});
+
+//User Login API
 app.post('/sign-in', async (req, res) => {
      try {
           const user = await User.findOne({ email: req.body.email });
@@ -170,7 +160,44 @@ app.post('/sign-in', async (req, res) => {
      }
 });
 
-// Get Profile from token
+//Admin Login API
+app.post('/admin-sign-in', async (req, res) => {
+     try {
+          const admin = await Admin.findOne({ email: req.body.email });
+          if (!admin) {
+               return res.status(400).send({
+                    message: 'Admin not found',
+                    success: false,
+               });
+          } else {
+               const hashedPassword = await bcrypt.compare(req.body.password, admin.password);
+               const expireIn = "10h";
+               const token = jwt.sign({ admin },
+                    'token',
+                    { expiresIn: expireIn });
+               if (!!hashedPassword) {
+                    return res.status(200).send({
+                         message: "Logged In Successfully",
+                         success: true,
+                         data: token
+                    });
+               } else {
+                    return res.status(401).send({
+                         message: "Passwords do not match",
+                         success: false
+                    });
+               }
+          }
+     } catch (error) {
+          return res.status(400).send({
+               message: "Something went wrong",
+               error: error.message,
+               success: false
+          });
+     }
+});
+
+// Get User Profile from token
 app.get('/loggeduser', async (req, res) => {
      try {
           const token = req.headers.authorization;
@@ -181,6 +208,33 @@ app.get('/loggeduser', async (req, res) => {
                     message: "Successfully Got the User",
                     success: true,
                     data: user
+               });
+          } else {
+               return res.status(404).send({
+                    message: "User not found",
+                    success: false
+               });
+          }
+     } catch (error) {
+          res.status(404).send({
+               message: "Something went wrong",
+               error: error.message,
+               success: false
+          });
+     }
+});
+
+// Get Admin Profile from token
+app.get('/loggedadmin', async (req, res) => {
+     try {
+          const token = req.headers.authorization;
+          const data = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString());
+          const admin = await Admin.findOne({ _id: data.user._id });
+          if (!!admin) {
+               return res.status(200).send({
+                    message: "Successfully Got the User",
+                    success: true,
+                    data: admin
                });
           } else {
                return res.status(404).send({
@@ -249,7 +303,7 @@ app.get('/getUser/:id', async (req, res) => {
      }
 });
 
-// Update user
+// Update user by id
 app.put('/updateUser/:id', upload.single('picture'), async (req, res) => {
      const { id } = req.params;
      const { firstname, lastname, email, phone } = req.body;
@@ -274,6 +328,48 @@ app.put('/updateUser/:id', upload.single('picture'), async (req, res) => {
                return res.status(200).send({
                     message: "Updted Successfully",
                     data: updateUser,
+                    success: true
+               });
+          } else {
+               return res.status(404).send({
+                    message: "Please Try Again Later",
+                    error: error.message
+               })
+          }
+     } catch (error) {
+          return res.status(400).send({
+               success: false,
+               message: "Something went wrong",
+               error: error.messsage
+          });
+     }
+});
+
+// Update admin by id
+app.put('/updateAdmin/:id', upload.single('picture'), async (req, res) => {
+     const { id } = req.params;
+     const { firstname, lastname, email, phone } = req.body;
+     try {
+          const updateAdminFields = {
+               firstname: firstname,
+               lastname: lastname,
+               email: email,
+               phone: phone,
+          };
+          if (req.file) {
+               updateAdminFields.picture = `images/${req.file.filename}`;
+          }
+          const updateAdmin = await Admin.findOneAndUpdate(
+               { _id: id },
+               {
+                    $set: updateAdminFields,
+               },
+               { new: true }
+          );
+          if (!!updateAdmin) {
+               return res.status(200).send({
+                    message: "Updted Successfully",
+                    data: updateAdmin,
                     success: true
                });
           } else {
@@ -383,6 +479,34 @@ app.put('/change-password/:id', async (req, res) => {
                return res.status(200).send({
                     success: true,
                     message: "Update Password Successfully",
+               });
+          } else {
+               return
+          }
+     } catch (error) {
+          res.status(404).send({
+               success: false,
+               message: "Something went wrong",
+               error
+          })
+     }
+})
+
+// Change Admin Password
+app.put('/change-admin-password/:id', async (req, res) => {
+     const { id } = req.params;
+     try {
+          const hashedPassword = await bcrypt.hash(req.body.password, 10);
+          const result = await Admin.findOneAndUpdate(
+               { _id: id },
+               { $set: { password: hashedPassword, } },
+               { new: true }
+          )
+          if (!!result) {
+               return res.status(200).send({
+                    success: true,
+                    message: "Update Password Successfully",
+                    admin: Admin
                });
           } else {
                return
@@ -512,6 +636,122 @@ app.post('/verify-otp', async (req, res) => {
      });
 });
 
+// Forget Admin Password. Sending link to gmail through Nodemailer
+app.post('/forget-admin-password', async (req, res) => {
+     try {
+          const email = req.body.email;
+          const admin = await Admin.findOne({ email: email });
+
+          if (!admin) {
+               return res.status(404).json({ message: 'Admin not found' });
+          }
+
+          const otp = otpGenerator.generate(6, { digits: true, alphabets: false, upperCase: false });
+          const otpExpiry = new Date();
+          otpExpiry.setMinutes(otpExpiry.getMinutes() + 15);
+
+          admin.otp = otp;
+          admin.otpExpiry = otpExpiry;
+          await admin.save();
+
+          var transporter = nodemailer.createTransport({
+               host: 'smtp.gmail.com',
+               port: 465,
+               secure: true,
+               service: 'gmail',
+               auth: {
+                    user: process.env.EMAIL_URL,
+                    pass: process.env.EMAIL_PASSWORD,
+               }
+          });
+
+          var mailOptions = {
+               from: process.env.EMAIL_URL,
+               to: email,
+               subject: 'Forgot Password OTP',
+               text: `Your OTP is: ${otp}`,
+          };
+
+          transporter.sendMail(mailOptions, function (error, info) {
+               if (error) {
+                    console.log(error.message);
+                    res.status(500).json({ message: 'Failed to send OTP' });
+
+               } else {
+                    // console.log('Email sent: ' + info.response);
+                    return res.status(200).send({
+                         message: 'OTP sent successfully',
+                         data: 'Email sent: ' + info.response,
+                         status: "Success",
+                         success: true
+                    });
+               }
+          });
+     } catch (error) {
+          return res.status(400).send({
+               success: false,
+               message: "Something went wrong",
+               error: error.messsage
+          });
+     }
+});
+
+// Verify admin OTP
+app.post('/verify-admin-otp', async (req, res) => {
+     const { email, otp } = req.body;
+
+     const admin = await Admin.findOne({ email });
+
+     if (!admin) {
+          return res.status(404).json({ message: 'User not found' });
+     }
+
+     if (admin.otp !== otp || admin.otpExpiry < new Date()) {
+          return res.status(400).json({ message: 'Invalid or expired OTP' });
+     }
+
+     admin.otp = undefined;
+     admin.otpExpiry = undefined;
+     await admin.save();
+
+     const expireIn = "1d";
+     const token = jwt.sign({ admin },
+          'token',
+          { expiresIn: expireIn });
+
+     var transporter = nodemailer.createTransport({
+          host: 'smtp.gmail.com',
+          port: 465,
+          secure: true,
+          service: 'gmail',
+          auth: {
+               user: process.env.EMAIL_URL,
+               pass: process.env.EMAIL_PASSWORD,
+          }
+     });
+
+     var mailOptions = {
+          from: process.env.EMAIL_URL,
+          to: email,
+          subject: 'OTP Verified Successfully.',
+     };
+
+     transporter.sendMail(mailOptions, function (error, info) {
+          if (error) {
+               console.log(error.message);
+               res.status(500).json({ message: 'OTP Not Verified' });
+
+          } else {
+               return res.status(200).send({
+                    message: 'OTP Verified Successfully',
+                    data: { token, id: admin._id },
+                    status: "Success",
+                    success: true,
+               });
+          }
+     });
+});
+
 // Reset password
 app.post('/reset-password/:id/:token', async (req, res) => {
      const { id, token } = req.params;
@@ -521,6 +761,35 @@ app.post('/reset-password/:id/:token', async (req, res) => {
           if (tokens) {
                const hashedPassword = await bcrypt.hash(password, 10);
                const updatePassword = await User.findByIdAndUpdate({ _id: id },
+                    { $set: { password: hashedPassword } },
+                    { new: true })
+               if (updatePassword) {
+                    return res.status(200).send({ message: "Password Reset Successfully", success: true, data: updatePassword })
+               } else {
+                    return res.status(404).send({
+                         message: "Password not updated",
+                         success: false
+                    })
+               }
+          }
+     } catch (error) {
+          return res.status(400).send({
+               success: false,
+               message: "Something went wrong",
+               error: error.messsage
+          });
+     }
+});
+
+// Reset Admin password
+app.post('/reset-admin-password/:id/:token', async (req, res) => {
+     const { id, token } = req.params;
+     const { password } = req.body;
+     try {
+          const tokens = jwt.verify(token, 'token');
+          if (tokens) {
+               const hashedPassword = await bcrypt.hash(password, 10);
+               const updatePassword = await Admin.findByIdAndUpdate({ _id: id },
                     { $set: { password: hashedPassword } },
                     { new: true })
                if (updatePassword) {
