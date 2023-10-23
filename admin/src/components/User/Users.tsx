@@ -23,7 +23,7 @@ const Users = () => {
 
   const getUsers = async () => {
     try {
-      const res = await axios.get(`${process.env.REACT_APP_API}/getUser`);
+      const res = await axios.get(`${process.env.REACT_APP_API}/getUsers`);
       if (!!res) {
         setLoading(false);
         setUsers(res.data.data);

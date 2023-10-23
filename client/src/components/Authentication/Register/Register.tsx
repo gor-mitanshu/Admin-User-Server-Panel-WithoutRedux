@@ -119,7 +119,7 @@ const SignUp = () => {
       formData.append("picture", user.picture);
 
       const res = await axios.post(
-        `${process.env.REACT_APP_API}/sign-up`,
+        `${process.env.REACT_APP_API}/signup`,
         formData,
         { headers: { "Content-Type": "multipart/form-data" } }
       );

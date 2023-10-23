@@ -43,7 +43,7 @@ const ViewUser = () => {
         const accessToken = localStorage.getItem("token");
         if (accessToken) {
           const res = await axios.get(
-            `${process.env.REACT_APP_API}/loggeduser`,
+            `${process.env.REACT_APP_API}/loggedadmin`,
             {
               headers: { Authorization: `Bearer ${accessToken}` },
             }

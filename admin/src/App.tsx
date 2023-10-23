@@ -6,13 +6,13 @@ import SignIn from "./components/Authentication/Login/Login";
 import ForgetPassword from "./components/Authentication/ForgetPassword/ForgetPassword";
 import ResetPassword from "./components/Authentication/ChangePassword/ChangePassword";
 import Layout from "./components/Layout/Layout/Layout";
-import { Dashboard } from "@mui/icons-material";
 import Profile from "./components/Profile/Profile";
 import UpdateProfile from "./components/Profile/UpdateProfile";
 import Users from "./components/User/Users";
 import UpdateUser from "./components/User/UpdateUser";
 import ViewUser from "./components/User/ViewUser";
 import SidebarChangePassword from "./components/SidebarChangePassword/SideChangePassword";
+import Dashboard from "./components/Dashboard/DashboardPage";
 
 function App() {
   const ProtectedRoutes = ProtectedRoute();

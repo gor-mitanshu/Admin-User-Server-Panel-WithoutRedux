@@ -83,16 +83,18 @@ const SignIn = () => {
         password: user.password,
       };
       const res = await axios.post(
-        `${process.env.REACT_APP_API}/sign-in`,
+        `${process.env.REACT_APP_API}/admin-signin`,
         body
       );
       if (!!res) {
+        console.log(res);
         login(res.data);
         localStorage.setItem("token", JSON.stringify(res.data));
         navigate(state?.path || "/", { replace: true });
         toast.success(res.data.message);
       }
     } catch (error: any) {
+      console.log(error);
       showErrorWithTimeout(error.response.data.message, 3000);
       return;
     }
@@ -174,9 +176,6 @@ const SignIn = () => {
               <Grid item xs textAlign={"center"} marginBottom={1}>
                 <Link to={"/forget-password"}>Forgot password?</Link>
               </Grid>
-              {/* <Grid item textAlign={"center"} marginBottom={1}>
-                <Link to={"/sign-up"}>Don't have an account? Sign Up</Link>
-              </Grid> */}
             </Box>
           </Box>
           <Copyright sx={{ mt: 4, mb: 2 }} />

@@ -80,7 +80,7 @@ const ResetPassword = () => {
         password: user.password,
       };
       const res = await axios.post(
-        `${process.env.REACT_APP_API}/reset-password/${id}/${token}`,
+        `${process.env.REACT_APP_API}/resetpassword/${id}/${token}`,
         body
       );
       if (!!res) {

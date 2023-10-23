@@ -8,20 +8,18 @@ const multer = require('multer');
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
 const otpGenerator = require('otp-generator');
+const path = require('path');
 
 const app = express();
 require('dotenv').config();
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-const path = require('path');
 
 const User = require('./models/UserSchema');
 const Admin = require('./models/AdminSchema');
 
 app.use("/images", express.static(path.join(__dirname, 'masterImages')));
-// const fs = require('fs');
-
 
 mongoose.connect(`${process.env.MONGO_URL}/${process.env.MONGO_DBNAME}`).then(success => {
      console.log(`Connection Established with Database`.bgGreen.black);
@@ -47,177 +45,95 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage });
 
-//User Register API
-app.post('/sign-up', upload.single('picture'), async (req, res) => {
+/* ADMIN API's */
+app.post('/admin-signup', upload.single('picture'), async (req, res) => {
      try {
           const { firstname, lastname, email, phone, password } = req.body;
-          const preregistedUser = await User.findOne({ email: email });
-          if (!!preregistedUser) {
-               return res.status(201).send({
-                    message: 'User already exists',
-                    success: false,
-                    data: null,
-               });
-          } else {
-               const hashedPassword = await bcrypt.hash(password, 10);
-               const newUser = new User({
-                    firstname,
-                    lastname,
-                    email,
-                    phone,
-                    password: hashedPassword,
-                    role: "user",
-                    picture: `images/${req?.file?.filename}`,
-               });
-               await newUser.save();
-               return res.status(200).send({
-                    message: 'User Registered Successfully😉',
-                    data: newUser,
-                    success: true
-               });
+          if (!firstname) {
+               return res.status(500).send({ message: "Please Enter the Firstname", success: false });
           }
-     } catch (error) {
-          console.error('Error registering user:', error.message);
-          return res.status(500).send({
-               error: 'Internal server error',
-               error: error.message
-          });
-     }
-});
-
-// Register ADMIN API
-app.post('/admin-sign-up', upload.single('picture'), async (req, res) => {
-     try {
-          const { firstname, lastname, email, phone, password } = req.body;
+          if (!lastname) {
+               return res.status(500).send({ message: "Please Enter the Lastname", success: false });
+          }
+          if (!email) {
+               return res.status(500).send({ message: "Please Enter the Email", success: false });
+          }
+          if (!phone) {
+               return res.status(500).send({ message: "Please Enter the Phone", success: false });
+          }
+          if (!password) {
+               return res.status(500).send({ message: "Please Enter the Password", success: false });
+          }
+          if (!req.body) {
+               return res.status(500).send({ message: "Please Enter all the fields", success: false });
+          }
           const preregistedAdmin = await Admin.findOne({ email: email });
           if (!!preregistedAdmin) {
-               return res.status(201).send({
-                    message: 'User Already Exists',
+               return res.status(409).send({
+                    message: 'Admin Already Exists',
                     success: false,
                     data: null,
                });
-          } else {
-               const hashedPassword = await bcrypt.hash(password, 10);
-               const newAdmin = new Admin({
-                    firstname,
-                    lastname,
-                    email,
-                    phone,
-                    password: hashedPassword,
-                    role: "admin",
-                    picture: `images/${req?.file?.filename}`,
-               });
-               await newAdmin.save();
-               return res.status(200).send({
-                    message: 'Admin Registered Successfully😉',
-                    data: newAdmin,
-                    success: true
-               });
           }
+          const hashedPassword = await bcrypt.hash(password, 10);
+          const newAdmin = new Admin({
+               firstname,
+               lastname,
+               email,
+               phone,
+               password: hashedPassword,
+               role: "admin",
+               picture: `images/${req?.file?.filename}`,
+          });
+          await newAdmin.save();
+          return res.status(200).send({
+               message: 'Admin Registered Successfully!!!',
+               data: newAdmin,
+               success: true
+          });
+
      } catch (error) {
           console.error('Error registering user:', error.message);
-          return res.status(500).send({
+          return res.status(400).send({
                error: 'Internal server error',
                error: error.message
-          });
-     }
-});
-
-//User Login API
-app.post('/sign-in', async (req, res) => {
-     try {
-          const user = await User.findOne({ email: req.body.email });
-          if (!user) {
-               return res.status(400).send({
-                    message: 'User not found',
-                    success: false,
-               });
-          } else {
-               const hashedPassword = await bcrypt.compare(req.body.password, user.password);
-               const expireIn = "10h";
-               const token = jwt.sign({ user },
-                    'token',
-                    { expiresIn: expireIn });
-               if (!!hashedPassword) {
-                    return res.status(200).send({
-                         message: "Logged In Successfully",
-                         success: true,
-                         data: token
-                    });
-               } else {
-                    return res.status(401).send({
-                         message: "Passwords do not match",
-                         success: false
-                    });
-               }
-          }
-     } catch (error) {
-          return res.status(400).send({
-               message: "Something went wrong",
-               error: error.message,
-               success: false
           });
      }
 });
 
 //Admin Login API
-app.post('/admin-sign-in', async (req, res) => {
+app.post('/admin-signin', async (req, res) => {
      try {
-          const admin = await Admin.findOne({ email: req.body.email });
-          if (!admin) {
-               return res.status(400).send({
-                    message: 'Admin not found',
-                    success: false,
-               });
-          } else {
-               const hashedPassword = await bcrypt.compare(req.body.password, admin.password);
-               const expireIn = "10h";
-               const token = jwt.sign({ admin },
-                    'token',
-                    { expiresIn: expireIn });
-               if (!!hashedPassword) {
-                    return res.status(200).send({
-                         message: "Logged In Successfully",
-                         success: true,
-                         data: token
-                    });
-               } else {
-                    return res.status(401).send({
-                         message: "Passwords do not match",
-                         success: false
-                    });
-               }
+          const { email } = req.body;
+          const admin = await Admin.findOne({ email: email });
+          const compareHashedPassword = await bcrypt.compare(req.body.password, admin.password);
+          const expireIn = "10h";
+          const token = jwt.sign({ admin },
+               'token',
+               { expiresIn: expireIn });
+          if (!email) {
+               return res.status(500).send({ message: "Please Enter the Email", success: false });
           }
-     } catch (error) {
-          return res.status(400).send({
-               message: "Something went wrong",
-               error: error.message,
-               success: false
-          });
-     }
-});
-
-// Get User Profile from token
-app.get('/loggeduser', async (req, res) => {
-     try {
-          const token = req.headers.authorization;
-          const data = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString());
-          const user = await User.findOne({ _id: data.user._id });
-          if (!!user) {
-               return res.status(200).send({
-                    message: "Successfully Got the User",
-                    success: true,
-                    data: user
-               });
-          } else {
-               return res.status(404).send({
-                    message: "User not found",
+          if (!compareHashedPassword) {
+               return res.status(401).send({
+                    message: "Passwords do not match",
                     success: false
                });
           }
+          if (!admin) {
+               return res.status(404).send({
+                    message: 'Admin not found',
+                    success: false,
+               });
+          }
+          return res.status(200).send({
+               message: "Logged In Successfully!!!",
+               success: true,
+               data: token
+          })
      } catch (error) {
-          res.status(404).send({
-               message: "Something went wrong",
+          return res.status(400).send({
+               message: "Internal Server Error",
                error: error.message,
                success: false
           });
@@ -228,46 +144,144 @@ app.get('/loggeduser', async (req, res) => {
 app.get('/loggedadmin', async (req, res) => {
      try {
           const token = req.headers.authorization;
-          const data = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString());
-          const admin = await Admin.findOne({ _id: data.user._id });
-          if (!!admin) {
-               return res.status(200).send({
-                    message: "Successfully Got the User",
-                    success: true,
-                    data: admin
-               });
-          } else {
-               return res.status(404).send({
-                    message: "User not found",
+          if (!token) {
+               return res.status(500).send({
+                    message: "Token not found",
                     success: false
                });
           }
+          const data = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString());
+          const admin = await Admin.findOne({ _id: data.admin._id });
+          if (!admin) {
+               return res.status(404).send({
+                    message: "Admin not found",
+                    success: false
+               });
+          }
+          return res.status(200).send({
+               message: "Successfully Got the User",
+               success: true,
+               data: admin
+          });
      } catch (error) {
-          res.status(404).send({
-               message: "Something went wrong",
+          res.status(400).send({
+               message: "Internal server error",
                error: error.message,
                success: false
           });
      }
 });
 
+// Get Admin Profile by Id
+app.get('/loggedadmin/:id', async (req, res) => {
+     try {
+          const { id } = req.params;
+          if (!id) {
+               return res.status(500).send({
+                    success: false,
+                    message: "Id not found",
+               });
+          }
+          const viewAdmin = await Admin.findById({ _id: id });
+          if (!viewAdmin) {
+               return res.status(500).send({
+                    success: false,
+                    message: "Admin not found",
+               });
+          }
+          return res.status(200).send({
+               success: true,
+               message: "Success",
+               data: viewAdmin
+          });
+     } catch (error) {
+          res.status(400).send({
+               message: "Internal server error",
+               error: error.message,
+               success: false
+          });
+     }
+});
+
+// Update Admin by id
+app.put('/updateAdmin/:id', upload.single('picture'), async (req, res) => {
+     const { id } = req.params;
+     if (!id) {
+          return res.status(500).send({
+               success: false,
+               message: "Id not found",
+          });
+     }
+     const { firstname, lastname, email, phone } = req.body;
+     if (!firstname) {
+          return res.status(500).send({ message: "Please Enter the Firstname", success: false });
+     }
+     if (!lastname) {
+          return res.status(500).send({ message: "Please Enter the Lastname", success: false });
+     }
+     if (!email) {
+          return res.status(500).send({ message: "Please Enter the Email", success: false });
+     }
+     if (!phone) {
+          return res.status(500).send({ message: "Please Enter the Phone", success: false });
+     }
+     if (!req.body) {
+          return res.status(500).send({ message: "Please Enter all the fields", success: false });
+     }
+     try {
+          const updateAdminFields = {
+               firstname: firstname,
+               lastname: lastname,
+               email: email,
+               phone: phone,
+          };
+          if (req?.file) {
+               updateAdminFields.picture = `images/${req?.file?.filename}`;
+          }
+          const updateAdmin = await Admin.findOneAndUpdate(
+               { _id: id },
+               {
+                    $set: updateAdminFields,
+               },
+               { new: true }
+          );
+          if (!updateAdmin) {
+               return res.status(500).send({
+                    message: "Update Unsuccessful. Please try again later",
+                    error: error.message,
+                    success: true
+               })
+          }
+          return res.status(200).send({
+               message: "Updated Successfully!!!",
+               data: updateAdmin,
+               success: true
+          });
+     } catch (error) {
+          return res.status(400).send({
+               success: false,
+               message: "Internal Server Error",
+               error: error.messsage
+          });
+     }
+});
+
 // Get all the registered user details
-app.get('/getUser', async (req, res) => {
+app.get('/getUsers', async (req, res) => {
      try {
           const getAllUser = await User.find({ role: "user" });
-          if (getAllUser) {
-               return res.status(200).send({
-                    success: true,
-                    message: "Success",
-                    data: getAllUser
-               });
-          } else {
-               return res.status(400).send({
+          if (!getAllUser) {
+               return res.status(500).send({
                     success: false,
                     message: "Data Not Found",
                     error: error.message
                });
           }
+          return res.status(200).send({
+               success: true,
+               message: "Success",
+               data: getAllUser
+          });
      } catch (error) {
           res.status(404).send({
                success: false,
@@ -281,23 +295,28 @@ app.get('/getUser', async (req, res) => {
 app.get('/getUser/:id', async (req, res) => {
      try {
           const { id } = req.params
-          const viewUser = await User.findById({ _id: id })
-          if (viewUser) {
-               return res.status(200).send({
-                    success: true,
-                    message: "Success",
-                    data: viewUser
-               });
-          } else {
-               res.status(400).send({
+          if (!id) {
+               return res.status(500).send({
                     success: false,
-                    message: "Error Fetching Data",
+                    message: "Id not found",
                });
           }
+          const viewUser = await User.findById({ _id: id })
+          if (!viewUser) {
+               res.status(500).send({
+                    success: false,
+                    message: "Data Not Found",
+               });
+          }
+          return res.status(200).send({
+               success: true,
+               message: "Success",
+               data: viewUser
+          });
      } catch (error) {
           res.status(404).send({
                success: false,
-               message: "Something went wrong",
+               message: "Internal server error",
                error: error.messsage
           });
      }
@@ -306,7 +325,28 @@ app.get('/getUser/:id', async (req, res) => {
 // Update user by id
 app.put('/updateUser/:id', upload.single('picture'), async (req, res) => {
      const { id } = req.params;
+     if (!id) {
+          return res.status(500).send({
+               success: false,
+               message: "Id not found",
+          });
+     }
      const { firstname, lastname, email, phone } = req.body;
+     if (!firstname) {
+          return res.status(500).send({ message: "Please Enter the Firstname", success: false });
+     }
+     if (!lastname) {
+          return res.status(500).send({ message: "Please Enter the Lastname", success: false });
+     }
+     if (!email) {
+          return res.status(500).send({ message: "Please Enter the Email", success: false });
+     }
+     if (!phone) {
+          return res.status(500).send({ message: "Please Enter the Phone", success: false });
+     }
+     if (!req.body) {
+          return res.status(500).send({ message: "Please Enter all the fields", success: false });
+     }
      try {
           const updateUserFields = {
                firstname: firstname,
@@ -324,64 +364,22 @@ app.put('/updateUser/:id', upload.single('picture'), async (req, res) => {
                },
                { new: true }
           );
-          if (!!updateUser) {
-               return res.status(200).send({
-                    message: "Updted Successfully",
-                    data: updateUser,
+          if (!updateUser) {
+               return res.status(500).send({
+                    message: "Update Unsuccessful",
+                    error: error.message,
                     success: true
-               });
-          } else {
-               return res.status(404).send({
-                    message: "Please Try Again Later",
-                    error: error.message
                })
           }
-     } catch (error) {
-          return res.status(400).send({
-               success: false,
-               message: "Something went wrong",
-               error: error.messsage
+          return res.status(200).send({
+               message: "Updted Successfully!!!",
+               data: updateUser,
+               success: true
           });
-     }
-});
-
-// Update admin by id
-app.put('/updateAdmin/:id', upload.single('picture'), async (req, res) => {
-     const { id } = req.params;
-     const { firstname, lastname, email, phone } = req.body;
-     try {
-          const updateAdminFields = {
-               firstname: firstname,
-               lastname: lastname,
-               email: email,
-               phone: phone,
-          };
-          if (req.file) {
-               updateAdminFields.picture = `images/${req.file.filename}`;
-          }
-          const updateAdmin = await Admin.findOneAndUpdate(
-               { _id: id },
-               {
-                    $set: updateAdminFields,
-               },
-               { new: true }
-          );
-          if (!!updateAdmin) {
-               return res.status(200).send({
-                    message: "Updted Successfully",
-                    data: updateAdmin,
-                    success: true
-               });
-          } else {
-               return res.status(404).send({
-                    message: "Please Try Again Later",
-                    error: error.message
-               })
-          }
      } catch (error) {
           return res.status(400).send({
                success: false,
-               message: "Something went wrong",
+               message: "Internal Server Error",
                error: error.messsage
           });
      }
@@ -391,23 +389,28 @@ app.put('/updateAdmin/:id', upload.single('picture'), async (req, res) => {
 app.delete('/deleteuser/:id', async (req, res) => {
      try {
           const { id } = req.params
+          if (!id) {
+               return res.status(500).send({
+                    success: false,
+                    message: "Id not found",
+               });
+          }
           const deleteEmp = await User.findByIdAndDelete({ _id: id })
-          if (!!deleteEmp) {
-               return res.status(200).send({
-                    success: true,
-                    message: "User Deleted Successfully",
-               })
-          } else {
+          if (!deleteEmp) {
                return res.status(404).send({
                     success: false,
-                    message: "Error Deleting Employee"
+                    message: "Unable to Delete User",
+                    success: true,
                })
           }
+          return res.status(200).send({
+               success: true,
+               message: "User Deleted Successfully",
+          })
      } catch (error) {
-          console.log(error)
           res.status(404).send({
                success: false,
-               message: "Something went wrong",
+               message: "Internal Server Error",
                error: error.message
           })
      }
@@ -417,7 +420,6 @@ app.delete('/deleteuser/:id', async (req, res) => {
 app.post('/send-email', async (req, res) => {
      try {
           const { to, subject, body, from } = req.body;
-
           const transporter = nodemailer.createTransport({
                host: 'smtp.gmail.com',
                port: 465,
@@ -428,7 +430,6 @@ app.post('/send-email', async (req, res) => {
                     pass: process.env.EMAIL_PASSWORD,
                }
           });
-
           // Email data
           const mailOptions = {
                from: from,
@@ -436,7 +437,6 @@ app.post('/send-email', async (req, res) => {
                subject: subject,
                text: body,
           };
-
           // Send the email
           transporter.sendMail(mailOptions, (error, info) => {
                if (error) {
@@ -465,36 +465,15 @@ app.post('/send-email', async (req, res) => {
      }
 });
 
-// Change Password
-app.put('/change-password/:id', async (req, res) => {
-     const { id } = req.params;
-     try {
-          const hashedPassword = await bcrypt.hash(req.body.password, 10);
-          const result = await User.findOneAndUpdate(
-               { _id: id },
-               { $set: { password: hashedPassword, } },
-               { new: true }
-          )
-          if (!!result) {
-               return res.status(200).send({
-                    success: true,
-                    message: "Update Password Successfully",
-               });
-          } else {
-               return
-          }
-     } catch (error) {
-          res.status(404).send({
-               success: false,
-               message: "Something went wrong",
-               error
-          })
-     }
-})
-
 // Change Admin Password
-app.put('/change-admin-password/:id', async (req, res) => {
+app.put('/change-adminpassword/:id', async (req, res) => {
      const { id } = req.params;
+     if (!id) {
+          return res.status(500).send({
+               success: false,
+               message: "Id not found",
+          });
+     }
      try {
           const hashedPassword = await bcrypt.hash(req.body.password, 10);
           const result = await Admin.findOneAndUpdate(
@@ -506,138 +485,25 @@ app.put('/change-admin-password/:id', async (req, res) => {
                return res.status(200).send({
                     success: true,
                     message: "Update Password Successfully",
-                    admin: Admin
+                    data: result
                });
           } else {
-               return
+               return res.status(404).send({
+                    success: false,
+                    message: "Error Changing Password",
+               })
           }
      } catch (error) {
           res.status(404).send({
                success: false,
-               message: "Something went wrong",
+               message: "Internal Server Error",
                error
           })
      }
 })
 
 // Forget Password. Sending link to gmail through Nodemailer
-app.post('/forget-password', async (req, res) => {
-     try {
-          const email = req.body.email;
-          const user = await User.findOne({ email: email });
-
-          if (!user) {
-               return res.status(404).json({ message: 'User not found' });
-          }
-
-          const otp = otpGenerator.generate(6, { digits: true, alphabets: false, upperCase: false });
-          const otpExpiry = new Date();
-          otpExpiry.setMinutes(otpExpiry.getMinutes() + 15);
-
-          user.otp = otp;
-          user.otpExpiry = otpExpiry;
-          await user.save();
-
-          var transporter = nodemailer.createTransport({
-               host: 'smtp.gmail.com',
-               port: 465,
-               secure: true,
-               service: 'gmail',
-               auth: {
-                    user: process.env.EMAIL_URL,
-                    pass: process.env.EMAIL_PASSWORD,
-               }
-          });
-
-          var mailOptions = {
-               from: process.env.EMAIL_URL,
-               to: email,
-               subject: 'Forgot Password OTP',
-               text: `Your OTP is: ${otp}`,
-          };
-
-          transporter.sendMail(mailOptions, function (error, info) {
-               if (error) {
-                    console.log(error.message);
-                    res.status(500).json({ message: 'Failed to send OTP' });
-
-               } else {
-                    // console.log('Email sent: ' + info.response);
-                    return res.status(200).send({
-                         message: 'OTP sent successfully',
-                         data: 'Email sent: ' + info.response,
-                         status: "Success",
-                         success: true
-                    });
-               }
-          });
-     } catch (error) {
-          return res.status(400).send({
-               success: false,
-               message: "Something went wrong",
-               error: error.messsage
-          });
-     }
-});
-
-// Verify OTP
-app.post('/verify-otp', async (req, res) => {
-     const { email, otp } = req.body;
-
-     const user = await User.findOne({ email });
-
-     if (!user) {
-          return res.status(404).json({ message: 'User not found' });
-     }
-
-     if (user.otp !== otp || user.otpExpiry < new Date()) {
-          return res.status(400).json({ message: 'Invalid or expired OTP' });
-     }
-
-     user.otp = undefined;
-     user.otpExpiry = undefined;
-     await user.save();
-
-     const expireIn = "1d";
-     const token = jwt.sign({ user },
-          'token',
-          { expiresIn: expireIn });
-
-     var transporter = nodemailer.createTransport({
-          host: 'smtp.gmail.com',
-          port: 465,
-          secure: true,
-          service: 'gmail',
-          auth: {
-               user: process.env.EMAIL_URL,
-               pass: process.env.EMAIL_PASSWORD,
-          }
-     });
-
-     var mailOptions = {
-          from: process.env.EMAIL_URL,
-          to: email,
-          subject: 'OTP Verified Successfully.',
-     };
-
-     transporter.sendMail(mailOptions, function (error, info) {
-          if (error) {
-               console.log(error.message);
-               res.status(500).json({ message: 'OTP Not Verified' });
-
-          } else {
-               return res.status(200).send({
-                    message: 'OTP Verified Successfully',
-                    data: { token, id: user._id },
-                    status: "Success",
-                    success: true,
-               });
-          }
-     });
-});
-
-// Forget Admin Password. Sending link to gmail through Nodemailer
-app.post('/forget-admin-password', async (req, res) => {
+app.post('/admin-forgetpassword', async (req, res) => {
      try {
           const email = req.body.email;
           const admin = await Admin.findOne({ email: email });
@@ -696,18 +562,18 @@ app.post('/forget-admin-password', async (req, res) => {
      }
 });
 
-// Verify admin OTP
-app.post('/verify-admin-otp', async (req, res) => {
+// Verify OTP
+app.post('/admin-verifyotp', async (req, res) => {
      const { email, otp } = req.body;
 
      const admin = await Admin.findOne({ email });
 
      if (!admin) {
-          return res.status(404).json({ message: 'User not found' });
+          return res.status(404).send({ message: 'User not found' });
      }
 
      if (admin.otp !== otp || admin.otpExpiry < new Date()) {
-          return res.status(400).json({ message: 'Invalid or expired OTP' });
+          return res.status(400).send({ message: 'Invalid or expired OTP' });
      }
 
      admin.otp = undefined;
@@ -753,14 +619,14 @@ app.post('/verify-admin-otp', async (req, res) => {
 });
 
 // Reset password
-app.post('/reset-password/:id/:token', async (req, res) => {
+app.post('/admin-resetpassword/:id/:token', async (req, res) => {
      const { id, token } = req.params;
      const { password } = req.body;
      try {
           const tokens = jwt.verify(token, 'token');
           if (tokens) {
                const hashedPassword = await bcrypt.hash(password, 10);
-               const updatePassword = await User.findByIdAndUpdate({ _id: id },
+               const updatePassword = await Admin.findByIdAndUpdate({ _id: id },
                     { $set: { password: hashedPassword } },
                     { new: true })
                if (updatePassword) {
@@ -781,15 +647,391 @@ app.post('/reset-password/:id/:token', async (req, res) => {
      }
 });
 
-// Reset Admin password
-app.post('/reset-admin-password/:id/:token', async (req, res) => {
+
+/*  User Panel */
+// Register User
+app.post('/signup', upload.single('picture'), async (req, res) => {
+     try {
+          const { firstname, lastname, email, phone, password } = req.body;
+          if (!firstname) {
+               return res.status(500).send({ message: "Please Enter the Firstname", success: false });
+          }
+          if (!lastname) {
+               return res.status(500).send({ message: "Please Enter the Lastname", success: false });
+          }
+          if (!email) {
+               return res.status(500).send({ message: "Please Enter the Email", success: false });
+          }
+          if (!phone) {
+               return res.status(500).send({ message: "Please Enter the Phone", success: false });
+          }
+          if (!password) {
+               return res.status(500).send({ message: "Please Enter the Password", success: false });
+          }
+          if (!req.body) {
+               return res.status(500).send({ message: "Please Enter all the fields", success: false });
+          }
+          const preregistedUser = await User.findOne({ email: email });
+          if (!!preregistedUser) {
+               return res.status(409).send({
+                    message: 'User Already Exists',
+                    success: false,
+                    data: null,
+               });
+          }
+          const hashedPassword = await bcrypt.hash(password, 10);
+          const newAdmin = new User({
+               firstname,
+               lastname,
+               email,
+               phone,
+               password: hashedPassword,
+               role: "user",
+               picture: `images/${req?.file?.filename}`,
+          });
+          await newAdmin.save();
+          return res.status(200).send({
+               message: 'Admin Registered Successfully!!!',
+               data: newAdmin,
+               success: true
+          });
+
+     } catch (error) {
+          console.error('Error registering user:', error.message);
+          return res.status(400).send({
+               error: 'Internal server error',
+               error: error.message
+          });
+     }
+});
+
+//User Login API
+app.post('/signin', async (req, res) => {
+     try {
+          const { email } = req.body;
+          const user = await User.findOne({ email: email });
+          const compareHashedPassword = await bcrypt.compare(req.body.password, user.password);
+          const expireIn = "10h";
+          const token = jwt.sign({ user },
+               'token',
+               { expiresIn: expireIn });
+          if (!email) {
+               return res.status(500).send({ message: "Please Enter the Email", success: false });
+          }
+          if (!compareHashedPassword) {
+               return res.status(401).send({
+                    message: "Passwords do not match",
+                    success: false
+               });
+          }
+          if (!user) {
+               return res.status(404).send({
+                    message: 'User not found',
+                    success: false,
+               });
+          }
+          return res.status(200).send({
+               message: "Logged In Successfully!!!",
+               success: true,
+               data: token
+          })
+     } catch (error) {
+          return res.status(400).send({
+               message: "Internal Server Error",
+               error: error.message,
+               success: false
+          });
+     }
+});
+
+// Get User Profile from token
+app.get('/loggeduser', async (req, res) => {
+     try {
+          const token = req.headers.authorization;
+          if (!token) {
+               return res.status(500).send({
+                    message: "Token not found",
+                    success: false
+               });
+          }
+          const data = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString());
+          const user = await User.findOne({ _id: data.user._id });
+          if (!user) {
+               return res.status(404).send({
+                    message: "Admin not found",
+                    success: false
+               });
+          }
+          return res.status(200).send({
+               message: "Successfully Got the User",
+               success: true,
+               data: user
+          });
+     } catch (error) {
+          res.status(400).send({
+               message: "Internal server error",
+               error: error.message,
+               success: false
+          });
+     }
+});
+
+// Get User Profile by Id
+app.get('/loggeduser/:id', async (req, res) => {
+     try {
+          const { id } = req.params;
+          if (!id) {
+               return res.status(500).send({
+                    success: false,
+                    message: "Id not found",
+               });
+          }
+          const viewUser = await User.findById({ _id: id });
+          if (!viewUser) {
+               return res.status(500).send({
+                    success: false,
+                    message: "Admin not found",
+               });
+          }
+          return res.status(200).send({
+               success: true,
+               message: "Success",
+               data: viewUser
+          });
+     } catch (error) {
+          res.status(400).send({
+               message: "Internal server error",
+               error: error.message,
+               success: false
+          });
+     }
+});
+
+// Update User by id
+app.put('/updateuser/:id', upload.single('picture'), async (req, res) => {
+     const { id } = req.params;
+     if (!id) {
+          return res.status(500).send({
+               success: false,
+               message: "Id not found",
+          });
+     }
+     const { firstname, lastname, email, phone } = req.body;
+     if (!firstname) {
+          return res.status(500).send({ message: "Please Enter the Firstname", success: false });
+     }
+     if (!lastname) {
+          return res.status(500).send({ message: "Please Enter the Lastname", success: false });
+     }
+     if (!email) {
+          return res.status(500).send({ message: "Please Enter the Email", success: false });
+     }
+     if (!phone) {
+          return res.status(500).send({ message: "Please Enter the Phone", success: false });
+     }
+     if (!req.body) {
+          return res.status(500).send({ message: "Please Enter all the fields", success: false });
+     }
+     try {
+          const updateAdminFields = {
+               firstname: firstname,
+               lastname: lastname,
+               email: email,
+               phone: phone,
+          };
+          if (req?.file) {
+               updateUserFields.picture = `images/${req?.file?.filename}`;
+          }
+          const updateUser = await User.findOneAndUpdate(
+               { _id: id },
+               {
+                    $set: updateUserFields,
+               },
+               { new: true }
+          );
+          if (!updateUser) {
+               return res.status(500).send({
+                    message: "Update Unsuccessful. Please try again later",
+                    error: error.message,
+                    success: true
+               })
+          }
+          return res.status(200).send({
+               message: "Updated Successfully!!!",
+               data: updateUser,
+               success: true
+          });
+     } catch (error) {
+          return res.status(400).send({
+               success: false,
+               message: "Internal Server Error",
+               error: error.messsage
+          });
+     }
+});
+
+// Change User Password
+app.put('/changepassword/:id', async (req, res) => {
+     const { id } = req.params;
+     if (!id) {
+          return res.status(500).send({
+               success: false,
+               message: "Id not found",
+          });
+     }
+     try {
+          const hashedPassword = await bcrypt.hash(req.body.password, 10);
+          const result = await User.findOneAndUpdate(
+               { _id: id },
+               { $set: { password: hashedPassword, } },
+               { new: true }
+          )
+          if (!!result) {
+               return res.status(200).send({
+                    success: true,
+                    message: "Update Password Successfully",
+                    data: result
+               });
+          } else {
+               return res.status(404).send({
+                    success: false,
+                    message: "Error Changing Password",
+               })
+          }
+     } catch (error) {
+          res.status(404).send({
+               success: false,
+               message: "Internal Server Error",
+               error
+          })
+     }
+});
+
+// Forget Password. Sending link to gmail through Nodemailer
+app.post('/forgetpassword', async (req, res) => {
+     try {
+          const email = req.body.email;
+          const user = await User.findOne({ email: email });
+
+          if (!user) {
+               return res.status(404).send({ message: 'Admin not found' });
+          }
+
+          const otp = otpGenerator.generate(6, { digits: true, alphabets: false, upperCase: false });
+          const otpExpiry = new Date();
+          otpExpiry.setMinutes(otpExpiry.getMinutes() + 15);
+
+          user.otp = otp;
+          user.otpExpiry = otpExpiry;
+          await user.save();
+
+          var transporter = nodemailer.createTransport({
+               host: 'smtp.gmail.com',
+               port: 465,
+               secure: true,
+               service: 'gmail',
+               auth: {
+                    user: process.env.EMAIL_URL,
+                    pass: process.env.EMAIL_PASSWORD,
+               }
+          });
+
+          var mailOptions = {
+               from: process.env.EMAIL_URL,
+               to: email,
+               subject: 'Forgot Password OTP',
+               text: `Your OTP is: ${otp}`,
+          };
+
+          transporter.sendMail(mailOptions, function (error, info) {
+               if (error) {
+                    console.log(error.message);
+                    res.status(500).json({ message: 'Failed to send OTP' });
+
+               } else {
+                    // console.log('Email sent: ' + info.response);
+                    return res.status(200).send({
+                         message: 'OTP sent successfully',
+                         data: 'Email sent: ' + info.response,
+                         status: "Success",
+                         success: true
+                    });
+               }
+          });
+     } catch (error) {
+          return res.status(400).send({
+               success: false,
+               message: "Something went wrong",
+               error: error.messsage
+          });
+     }
+});
+
+// Verify OTP
+app.post('/verifyotp', async (req, res) => {
+     const { email, otp } = req.body;
+
+     const user = await User.findOne({ email });
+
+     if (!user) {
+          return res.status(404).send({ message: 'User not found' });
+     }
+
+     if (user.otp !== otp || user.otpExpiry < new Date()) {
+          return res.status(400).send({ message: 'Invalid or expired OTP' });
+     }
+
+     user.otp = undefined;
+     user.otpExpiry = undefined;
+     await user.save();
+
+     const expireIn = "1d";
+     const token = jwt.sign({ user },
+          'token',
+          { expiresIn: expireIn });
+
+     var transporter = nodemailer.createTransport({
+          host: 'smtp.gmail.com',
+          port: 465,
+          secure: true,
+          service: 'gmail',
+          auth: {
+               user: process.env.EMAIL_URL,
+               pass: process.env.EMAIL_PASSWORD,
+          }
+     });
+
+     var mailOptions = {
+          from: process.env.EMAIL_URL,
+          to: email,
+          subject: 'OTP Verified Successfully.',
+     };
+
+     transporter.sendMail(mailOptions, function (error, info) {
+          if (error) {
+               console.log(error.message);
+               res.status(500).json({ message: 'OTP Not Verified' });
+
+          } else {
+               return res.status(200).send({
+                    message: 'OTP Verified Successfully',
+                    data: { token, id: user._id },
+                    status: "Success",
+                    success: true,
+               });
+          }
+     });
+});
+
+// Reset password
+app.post('/resetpassword/:id/:token', async (req, res) => {
      const { id, token } = req.params;
      const { password } = req.body;
      try {
           const tokens = jwt.verify(token, 'token');
           if (tokens) {
                const hashedPassword = await bcrypt.hash(password, 10);
-               const updatePassword = await Admin.findByIdAndUpdate({ _id: id },
+               const updatePassword = await User.findByIdAndUpdate({ _id: id },
                     { $set: { password: hashedPassword } },
                     { new: true })
                if (updatePassword) {

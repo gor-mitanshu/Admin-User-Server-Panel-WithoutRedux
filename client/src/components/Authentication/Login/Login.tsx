@@ -82,10 +82,7 @@ const SignIn = () => {
         email: user.email,
         password: user.password,
       };
-      const res = await axios.post(
-        `${process.env.REACT_APP_API}/sign-in`,
-        body
-      );
+      const res = await axios.post(`${process.env.REACT_APP_API}/signin`, body);
       if (!!res) {
         login(res.data);
         localStorage.setItem("token", JSON.stringify(res.data));
