@@ -268,8 +268,6 @@ app.put('/updateAdmin/:id', upload.single('picture'), async (req, res) => {
 
           if (existingUser.picture) {
                const imagePath = path.join(__dirname, 'masterImages', existingUser.picture.replace('images/', ''));
-
-               // Check if the file exists and then delete it
                if (fs.existsSync(imagePath)) {
                     fs.unlinkSync(imagePath);
                }
@@ -381,18 +379,26 @@ app.put('/updateUser/:id', upload.single('picture'), async (req, res) => {
      if (!phone) {
           return res.status(500).send({ message: "Please Enter the Phone", success: false });
      }
-     if (!req.body) {
+     if (!firstname || !lastname || !email || !phone) {
           return res.status(500).send({ message: "Please Enter all the fields", success: false });
      }
      try {
+          const existingUser = await User.findById(id);
           const updateUserFields = {
                firstname: firstname,
                lastname: lastname,
                email: email,
                phone: phone,
           };
-          if (req.file) {
-               updateUserFields.picture = `images/${req.file.filename}`;
+
+          if (req?.file) {
+               updateUserFields.picture = `images/${req?.file?.filename}`;
+          }
+          if (existingUser.picture) {
+               const imagePath = path.join(__dirname, 'masterImages', existingUser.picture.replace('images/', ''));
+               if (fs.existsSync(imagePath)) {
+                    fs.unlinkSync(imagePath);
+               }
           }
           const updateUser = await User.findOneAndUpdate(
                { _id: id },

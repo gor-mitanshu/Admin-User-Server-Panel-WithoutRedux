@@ -17,7 +17,7 @@ interface IUser {
   email: string;
   phone: string;
   password: string;
-  picture: string;
+  picture: string | File;
 }
 
 const UpdateUser = () => {
@@ -56,9 +56,21 @@ const UpdateUser = () => {
     }, timeout);
   };
 
-  const handleChange = (e: any, field?: string) => {
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files && files.length > 0) {
+      const file = files[0];
+      setEditedUser((prevUserDetails) => ({
+        ...prevUserDetails,
+        picture: file,
+      }));
+      setImageChanged(true);
+    }
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, files } = e.target;
-    if (field === "picture" && files.length > 0) {
+    if (name === "picture" && files && files.length > 0) {
       setEditedUser((prevUserDetails) => ({
         ...prevUserDetails,
         picture: files[0],
@@ -97,7 +109,7 @@ const UpdateUser = () => {
       formData.append("email", editedUser.email);
       formData.append("phone", editedUser.phone);
 
-      if (imageChanged) {
+      if (imageChanged && editedUser.picture instanceof File) {
         formData.append("picture", editedUser.picture);
       } else {
         formData.append("picture", initialPicture);
@@ -139,153 +151,106 @@ const UpdateUser = () => {
         xs={12}
         lg={6}
       >
-        {editedUser ? (
-          <Paper
-            elevation={3}
-            style={{
-              padding: "20px 0",
-              width: "100%",
-              background: "rgb(0 0 0 / 10%)",
-              // color: "white",
-            }}
-          >
-            {editedUser ? (
-              <>
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-evenly",
-                    flexWrap: "wrap",
-                    padding: "20px 0",
-                  }}
-                >
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      marginBottom: "20px",
-                    }}
-                  >
-                    <Avatar
-                      src={
-                        editedUser.picture
-                          ? `${process.env.REACT_APP_API}/${editedUser?.picture}`
-                          : ""
-                      }
-                      alt="User"
-                      sx={{
-                        width: "150px",
-                        height: "150px",
-                        marginBottom: "10px",
-                        border: "2px solid black",
-                      }}
-                    />
-                    <Button
-                      type="button"
-                      color="info"
-                      size="large"
-                      variant="outlined"
-                      onClick={() => {
-                        if (pictureInputRef.current) {
-                          pictureInputRef.current.click();
-                        }
-                      }}
-                      // onChange={(e) => handleChange(e, "picture")}
-                    >
-                      Change Image
-                    </Button>
-                    <input
-                      type="file"
-                      name="picture"
-                      accept="image/*"
-                      ref={pictureInputRef}
-                      style={{ display: "none" }}
-                      onChange={(e) => handleChange(e, "picture")}
-                    />
-                  </div>
-                  <div style={{ width: "50%" }}>
-                    {error && (
-                      <Typography
-                        marginY={1}
-                        textAlign={"center"}
-                        color="error"
-                      >
-                        <b>Error:</b> {error}
-                      </Typography>
-                    )}
-                    <Grid container spacing={2}>
-                      <Grid item xs={12} lg={6}>
-                        <TextField
-                          fullWidth
-                          label="First Name"
-                          name="firstname"
-                          value={editedUser?.firstname}
-                          onChange={handleChange}
-                        />
-                      </Grid>
-                      <Grid item xs={12} lg={6}>
-                        <TextField
-                          fullWidth
-                          label="Last Name"
-                          name="lastname"
-                          value={editedUser?.lastname}
-                          onChange={handleChange}
-                        />
-                      </Grid>
-                      <Grid item xs={12}>
-                        <TextField
-                          fullWidth
-                          label="Email"
-                          name="email"
-                          value={editedUser?.email}
-                          onChange={handleChange}
-                        />
-                      </Grid>
-                      <Grid item xs={12}>
-                        <TextField
-                          fullWidth
-                          label="Phone"
-                          name="phone"
-                          value={editedUser?.phone}
-                          onChange={handleChange}
-                        />
-                      </Grid>
-                    </Grid>
-                    <div style={{ display: "flex", justifyContent: "center" }}>
-                      <Button
-                        variant="contained"
-                        color="error"
-                        size="large"
-                        style={{ marginTop: "20px", marginRight: "5px" }}
-                        onClick={() => navigate("/users")}
-                      >
-                        Cancel
-                      </Button>
-                      <Button
-                        type="submit"
-                        variant="contained"
-                        color="primary"
-                        size="large"
-                        style={{ marginTop: "20px" }}
-                        onClick={(e: any) => handleSubmit(e)}
-                      >
-                        Update
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              </>
-            ) : (
-              <Typography variant="h5" color="error">
-                No Data Found
-              </Typography>
-            )}
-          </Paper>
-        ) : (
-          <Loader />
-        )}
+        <Paper
+          elevation={3}
+          style={{
+            padding: "20px 20px",
+            width: "100%",
+          }}
+        >
+          {editedUser ? (
+            <>
+              <Avatar
+                src={
+                  editedUser.picture instanceof File
+                    ? URL.createObjectURL(editedUser.picture)
+                    : `${process.env.REACT_APP_API}/${editedUser.picture}`
+                }
+                alt="User"
+                sx={{
+                  width: "150px",
+                  height: "150px",
+                  margin: "0 auto 20px",
+                }}
+              />
+              {error && (
+                <Typography marginY={1} textAlign={"center"} color="error">
+                  <b>Error:</b> {error}
+                </Typography>
+              )}
+              <Grid container spacing={2}>
+                <Grid item xs={6}>
+                  <TextField
+                    fullWidth
+                    label="First Name"
+                    name="firstname"
+                    value={editedUser?.firstname}
+                    onChange={handleChange}
+                  />
+                </Grid>
+                <Grid item xs={6}>
+                  <TextField
+                    fullWidth
+                    label="Last Name"
+                    name="lastname"
+                    value={editedUser?.lastname}
+                    onChange={handleChange}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    fullWidth
+                    label="Email"
+                    name="email"
+                    value={editedUser?.email}
+                    onChange={handleChange}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    fullWidth
+                    label="Phone"
+                    name="phone"
+                    value={editedUser?.phone}
+                    onChange={handleChange}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    fullWidth
+                    type="file"
+                    id="picture"
+                    name="picture"
+                    inputProps={{ multiple: false }}
+                    ref={pictureInputRef}
+                    onChange={handleImageChange}
+                  />
+                </Grid>
+              </Grid>
+              <Button
+                variant="contained"
+                color="error"
+                size="large"
+                style={{ marginTop: "20px", marginRight: "5px" }}
+                onClick={() => navigate("/profile")}
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                size="large"
+                style={{ marginTop: "20px" }}
+                onClick={(e: any) => handleSubmit(e)}
+              >
+                Update
+              </Button>
+            </>
+          ) : (
+            <Loader />
+          )}
+        </Paper>
       </Grid>
     </Grid>
   );

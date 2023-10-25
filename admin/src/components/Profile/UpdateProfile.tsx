@@ -18,7 +18,7 @@ interface IUser {
   email: string;
   phone: string;
   password: string;
-  picture: string | File; // Make sure 'picture' can be a File or string
+  picture: string | File;
 }
 
 const UpdateProfile = () => {
@@ -54,17 +54,6 @@ const UpdateProfile = () => {
     setTimeout(() => {
       setError(null);
     }, timeout);
-  };
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (files && files.length > 0) {
-      setEditedUser((prevUserDetails) => ({
-        ...prevUserDetails,
-        picture: files[0],
-      }));
-      setImageChanged(true);
-    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
