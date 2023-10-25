@@ -915,10 +915,11 @@ app.put('/updateuser/:id', upload.single('picture'), async (req, res) => {
      if (!phone) {
           return res.status(500).send({ message: "Please Enter the Phone", success: false });
      }
-     if (!req.body) {
+     if (!firstname || !lastname || !email || !phone) {
           return res.status(500).send({ message: "Please Enter all the fields", success: false });
      }
      try {
+          const existingUser = await User.findById(id);
           const updateAdminFields = {
                firstname: firstname,
                lastname: lastname,

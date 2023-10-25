@@ -170,7 +170,7 @@ const SidebarChangePassword = () => {
                 variant="contained"
                 sx={{ mt: 2, mb: 2, width: "100%" }}
               >
-                Submit
+                Reset
               </Button>
             </Box>
           </Box>
