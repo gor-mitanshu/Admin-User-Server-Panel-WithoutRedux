@@ -87,7 +87,6 @@ const SignIn = () => {
         body
       );
       if (!!res) {
-        console.log(res);
         login(res.data);
         localStorage.setItem("token", JSON.stringify(res.data));
         navigate(state?.path || "/", { replace: true });

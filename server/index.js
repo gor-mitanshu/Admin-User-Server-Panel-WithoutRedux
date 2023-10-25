@@ -9,6 +9,7 @@ const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
 const otpGenerator = require('otp-generator');
 const path = require('path');
+const fs = require('fs');
 
 const app = express();
 require('dotenv').config();
@@ -395,13 +396,29 @@ app.delete('/deleteuser/:id', async (req, res) => {
                     message: "Id not found",
                });
           }
-          const deleteEmp = await User.findByIdAndDelete({ _id: id })
-          if (!deleteEmp) {
+          const user = await User.findById(id);
+
+          if (!user) {
+               return res.status(404).send({
+                    success: false,
+                    message: "User not found",
+               });
+          }
+
+          const deleteUser = await User.findByIdAndDelete({ _id: id })
+          if (!deleteUser) {
                return res.status(404).send({
                     success: false,
                     message: "Unable to Delete User",
-                    success: true,
                })
+          }
+          if (user.picture) {
+               const filePath = path.join(__dirname, 'masterImages', user.picture.split('/')[1]);
+               fs.unlink(filePath, (err) => {
+                    if (err) {
+                         console.error('Error deleting file:', err);
+                    }
+               });
           }
           return res.status(200).send({
                success: true,

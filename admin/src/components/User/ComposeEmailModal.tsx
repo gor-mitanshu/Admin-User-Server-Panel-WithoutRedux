@@ -3,6 +3,7 @@ import { Modal, Paper, Typography, TextField, Button } from "@mui/material";
 import axios from "axios";
 import { toast } from "react-toastify";
 import Close from "@mui/icons-material/Close";
+import Loader from "../Loader/Loader";
 
 interface ComposeEmailModalProps {
   open: boolean;
@@ -21,6 +22,7 @@ const ComposeEmailModal: React.FC<ComposeEmailModalProps> = ({
     subject: "",
     body: "",
   });
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleEmailFieldChange = (field: string, value: string) => {
     setEmailFields({
@@ -32,6 +34,7 @@ const ComposeEmailModal: React.FC<ComposeEmailModalProps> = ({
   const handleSendClick = async (e: any) => {
     e.preventDefault();
     try {
+      setIsLoading(true);
       const { subject, body } = emailFields;
       const send = {
         to: to,
@@ -46,8 +49,15 @@ const ComposeEmailModal: React.FC<ComposeEmailModalProps> = ({
       if (!!res) {
         toast.success(res.data.message);
         onClose();
+        setIsLoading(false);
+        setEmailFields({
+          subject: "",
+          body: "",
+        });
       }
-    } catch (error) {}
+    } catch (error) {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -100,16 +110,19 @@ const ComposeEmailModal: React.FC<ComposeEmailModalProps> = ({
           value={emailFields.body}
           onChange={(e) => handleEmailFieldChange("body", e.target.value)}
         />
-        <Button
-          variant="contained"
-          color="error"
-          onClick={onClose}
-          sx={{ marginRight: "8px" }}
-        >
-          Cancel
-        </Button>
+        {!isLoading ? (
+          <Button
+            variant="contained"
+            color="error"
+            onClick={onClose}
+            sx={{ marginRight: "8px" }}
+          >
+            Cancel
+          </Button>
+        ) : null}
+
         <Button variant="contained" color="primary" onClick={handleSendClick}>
-          Send
+          {isLoading ? <Loader /> : "Send"}
         </Button>
       </Paper>
     </Modal>
