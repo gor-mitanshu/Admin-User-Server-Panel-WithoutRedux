@@ -72,6 +72,11 @@ const ForgetPassword = () => {
   const handleOTPSuccess = async () => {
     setLoading(true);
 
+    if (!user.otp) {
+      showErrorWithTimeout("Please Enter OTP", 3000);
+      setLoading(false);
+      return;
+    }
     const body = {
       email: user.email,
       otp: user.otp,

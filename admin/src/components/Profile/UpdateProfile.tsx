@@ -18,7 +18,7 @@ interface IUser {
   email: string;
   phone: string;
   password: string;
-  picture: string;
+  picture: string | File; // Make sure 'picture' can be a File or string
 }
 
 const UpdateProfile = () => {
@@ -56,9 +56,20 @@ const UpdateProfile = () => {
     }, timeout);
   };
 
-  const handleChange = (e: any, field?: string) => {
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files && files.length > 0) {
+      setEditedUser((prevUserDetails) => ({
+        ...prevUserDetails,
+        picture: files[0],
+      }));
+      setImageChanged(true);
+    }
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, files } = e.target;
-    if (field === "picture" && files.length > 0) {
+    if (name === "picture" && files && files.length > 0) {
       setEditedUser((prevUserDetails) => ({
         ...prevUserDetails,
         picture: files[0],
@@ -97,7 +108,7 @@ const UpdateProfile = () => {
       formData.append("email", editedUser.email);
       formData.append("phone", editedUser.phone);
 
-      if (imageChanged) {
+      if (imageChanged && editedUser.picture instanceof File) {
         formData.append("picture", editedUser.picture);
       } else {
         formData.append("picture", initialPicture);
@@ -144,8 +155,6 @@ const UpdateProfile = () => {
           style={{
             padding: "20px 20px",
             width: "100%",
-            // background: "rgb(0 0 0 / 10%)",
-            // color: "white",
           }}
         >
           {editedUser ? (
@@ -153,7 +162,9 @@ const UpdateProfile = () => {
               <Avatar
                 src={
                   editedUser.picture
-                    ? `${process.env.REACT_APP_API}/${editedUser?.picture}`
+                    ? editedUser.picture instanceof File
+                      ? URL.createObjectURL(editedUser.picture)
+                      : `${process.env.REACT_APP_API}/${editedUser.picture}`
                     : ""
                 }
                 alt="User"
@@ -208,15 +219,11 @@ const UpdateProfile = () => {
                 <Grid item xs={12}>
                   <TextField
                     fullWidth
-                    name="picture"
                     type="file"
                     id="picture"
-                    autoComplete="picture"
-                    inputProps={{
-                      multiple: false,
-                    }}
-                    // value={editedUser?.picture}
-                    onChange={(e) => handleChange(e, "picture")}
+                    name="picture"
+                    onChange={handleChange}
+                    InputProps={{ inputProps: { multiple: false } }}
                   />
                 </Grid>
               </Grid>

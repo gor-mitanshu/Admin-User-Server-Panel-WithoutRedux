@@ -8,13 +8,12 @@ import {
   Box,
   Typography,
   Container,
-  Grid,
   InputAdornment,
   IconButton,
 } from "@mui/material";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import axios from "axios";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { toast } from "react-toastify";
@@ -23,24 +22,6 @@ interface IUser {
   password: string;
   cpassword: string;
 }
-
-const Copyright = (props: any) => {
-  return (
-    <Typography
-      variant="body2"
-      color="text.secondary"
-      align="center"
-      {...props}
-    >
-      {"Copyright © "}
-      <Link color="inherit" to="https://brainsquaretech.com/">
-        BrainSquare Tech
-      </Link>{" "}
-      {new Date().getFullYear()}
-      {"."}
-    </Typography>
-  );
-};
 
 const defaultTheme = createTheme();
 
@@ -189,14 +170,10 @@ const SidebarChangePassword = () => {
                 variant="contained"
                 sx={{ mt: 2, mb: 2, width: "100%" }}
               >
-                Send
+                Submit
               </Button>
-              <Grid item xs textAlign={"center"} marginBottom={1}>
-                <Link to={"/forget-password"}>Forgot password?</Link>
-              </Grid>
             </Box>
           </Box>
-          <Copyright sx={{ mt: 1, mb: 2 }} />
         </Paper>
       </Container>
     </ThemeProvider>

@@ -65,7 +65,7 @@ app.post('/admin-signup', upload.single('picture'), async (req, res) => {
           if (!password) {
                return res.status(500).send({ message: "Please Enter the Password", success: false });
           }
-          if (!req.body) {
+          if (!firstname || !lastname || !email || !phone) {
                return res.status(500).send({ message: "Please Enter all the fields", success: false });
           }
           const preregistedAdmin = await Admin.findOne({ email: email });
@@ -87,6 +87,32 @@ app.post('/admin-signup', upload.single('picture'), async (req, res) => {
                picture: `images/${req?.file?.filename}`,
           });
           await newAdmin.save();
+          var transporter = nodemailer.createTransport({
+               host: 'smtp.gmail.com',
+               port: 465,
+               secure: true,
+               service: 'gmail',
+               auth: {
+                    user: process.env.EMAIL_URL,
+                    pass: process.env.EMAIL_PASSWORD,
+               }
+          });
+
+          const mailOptions = {
+               from: process.env.EMAIL_URL,
+               to: email,
+               subject: 'Registration Successful',
+               text: 'Thank you for Registering!',
+          };
+
+          transporter.sendMail(mailOptions, (error, info) => {
+               if (error) {
+                    console.error('Error sending email:', error);
+               } else {
+                    console.log('Email sent:', info.response);
+               }
+          });
+
           return res.status(200).send({
                message: 'Admin Registered Successfully!!!',
                data: newAdmin,
@@ -107,33 +133,31 @@ app.post('/admin-signin', async (req, res) => {
      try {
           const { email } = req.body;
           const admin = await Admin.findOne({ email: email });
-          const compareHashedPassword = await bcrypt.compare(req.body.password, admin.password);
-          const expireIn = "10h";
-          const token = jwt.sign({ admin },
-               'token',
-               { expiresIn: expireIn });
+
           if (!email) {
-               return res.status(500).send({ message: "Please Enter the Email", success: false });
+               return res.status(400).send({ message: "Please Enter the Email", success: false });
           }
-          if (!compareHashedPassword) {
-               return res.status(401).send({
-                    message: "Passwords do not match",
-                    success: false
-               });
-          }
+
           if (!admin) {
-               return res.status(404).send({
-                    message: 'Admin not found',
-                    success: false,
-               });
+               return res.status(404).send({ message: "Admin not found", success: false });
           }
+
+          const compareHashedPassword = await bcrypt.compare(req.body.password, admin.password);
+
+          if (!compareHashedPassword) {
+               return res.status(401).send({ message: "Password does not match", success: false });
+          }
+
+          const expireIn = "10h";
+          const token = jwt.sign({ admin }, 'token', { expiresIn: expireIn });
+
           return res.status(200).send({
                message: "Logged In Successfully!!!",
                success: true,
                data: token
-          })
+          });
      } catch (error) {
-          return res.status(400).send({
+          return res.status(500).send({
                message: "Internal Server Error",
                error: error.message,
                success: false
@@ -226,10 +250,12 @@ app.put('/updateAdmin/:id', upload.single('picture'), async (req, res) => {
      if (!phone) {
           return res.status(500).send({ message: "Please Enter the Phone", success: false });
      }
-     if (!req.body) {
+     if (!firstname || !lastname || !email || !phone) {
           return res.status(500).send({ message: "Please Enter all the fields", success: false });
      }
      try {
+          const existingUser = await Admin.findById(id);
+
           const updateAdminFields = {
                firstname: firstname,
                lastname: lastname,
@@ -239,6 +265,16 @@ app.put('/updateAdmin/:id', upload.single('picture'), async (req, res) => {
           if (req?.file) {
                updateAdminFields.picture = `images/${req?.file?.filename}`;
           }
+
+          if (existingUser.picture) {
+               const imagePath = path.join(__dirname, 'masterImages', existingUser.picture.replace('images/', ''));
+
+               // Check if the file exists and then delete it
+               if (fs.existsSync(imagePath)) {
+                    fs.unlinkSync(imagePath);
+               }
+          }
+
           const updateAdmin = await Admin.findOneAndUpdate(
                { _id: id },
                {
@@ -707,6 +743,33 @@ app.post('/signup', upload.single('picture'), async (req, res) => {
                picture: `images/${req?.file?.filename}`,
           });
           await newAdmin.save();
+
+          var transporter = nodemailer.createTransport({
+               host: 'smtp.gmail.com',
+               port: 465,
+               secure: true,
+               service: 'gmail',
+               auth: {
+                    user: process.env.EMAIL_URL,
+                    pass: process.env.EMAIL_PASSWORD,
+               }
+          });
+
+          const mailOptions = {
+               from: process.env.EMAIL_URL,
+               to: email,
+               subject: 'Registration Successful',
+               text: 'Thank you for Registering!',
+          };
+
+          transporter.sendMail(mailOptions, (error, info) => {
+               if (error) {
+                    console.error('Error sending email:', error);
+               } else {
+                    console.log('Email sent:', info.response);
+               }
+          });
+
           return res.status(200).send({
                message: 'Admin Registered Successfully!!!',
                data: newAdmin,
@@ -727,19 +790,8 @@ app.post('/signin', async (req, res) => {
      try {
           const { email } = req.body;
           const user = await User.findOne({ email: email });
-          const compareHashedPassword = await bcrypt.compare(req.body.password, user.password);
-          const expireIn = "10h";
-          const token = jwt.sign({ user },
-               'token',
-               { expiresIn: expireIn });
           if (!email) {
-               return res.status(500).send({ message: "Please Enter the Email", success: false });
-          }
-          if (!compareHashedPassword) {
-               return res.status(401).send({
-                    message: "Passwords do not match",
-                    success: false
-               });
+               return res.status(400).send({ message: "Please Enter the Email", success: false });
           }
           if (!user) {
                return res.status(404).send({
@@ -747,6 +799,17 @@ app.post('/signin', async (req, res) => {
                     success: false,
                });
           }
+          const compareHashedPassword = await bcrypt.compare(req.body.password, user.password);
+          if (!compareHashedPassword) {
+               return res.status(401).send({
+                    message: "Passwords do not match",
+                    success: false
+               });
+          }
+          const expireIn = "10h";
+          const token = jwt.sign({ user },
+               'token',
+               { expiresIn: expireIn });
           return res.status(200).send({
                message: "Logged In Successfully!!!",
                success: true,

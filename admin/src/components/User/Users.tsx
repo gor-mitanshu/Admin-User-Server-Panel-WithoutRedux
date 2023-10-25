@@ -63,8 +63,13 @@ const Users = () => {
     picture: (
       // eslint-disable-next-line jsx-a11y/img-redundant-alt
       <Avatar
-        src={`${process.env.REACT_APP_API}/${user?.picture}`}
-        alt="User"
+        src={
+          user.picture && user.picture.url
+            ? `${process.env.REACT_APP_API}/${user.picture.url}`
+            : undefined
+        }
+        // alt={user.picture === undefined && user.firstname[0]}
+        alt={"User"}
         // sx={{ height: "100%", width: "100%" }}
       />
     ),

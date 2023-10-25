@@ -23,6 +23,14 @@ const ComposeEmailModal: React.FC<ComposeEmailModalProps> = ({
     body: "",
   });
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const showErrorWithTimeout = (errorMessage: string, timeout: number) => {
+    setError(errorMessage);
+    setTimeout(() => {
+      setError(null);
+    }, timeout);
+  };
 
   const handleEmailFieldChange = (field: string, value: string) => {
     setEmailFields({
@@ -35,6 +43,16 @@ const ComposeEmailModal: React.FC<ComposeEmailModalProps> = ({
     e.preventDefault();
     try {
       setIsLoading(true);
+      if (!emailFields.subject) {
+        showErrorWithTimeout("Please Enter a Subject", 3000);
+        setIsLoading(false);
+        return;
+      }
+      if (!emailFields.body) {
+        showErrorWithTimeout("Body cannot be empty", 3000);
+        setIsLoading(false);
+        return;
+      }
       const { subject, body } = emailFields;
       const send = {
         to: to,
@@ -76,6 +94,11 @@ const ComposeEmailModal: React.FC<ComposeEmailModalProps> = ({
         <Typography variant="h5" marginBottom={3}>
           Compose an Email to <span style={{ color: "red" }}>{to}</span>
         </Typography>
+        {error && (
+          <Typography textAlign={"center"} color={"error"} sx={{ mt: 2 }}>
+            <b>Error:</b> {error}
+          </Typography>
+        )}
         <TextField
           label="To"
           fullWidth
