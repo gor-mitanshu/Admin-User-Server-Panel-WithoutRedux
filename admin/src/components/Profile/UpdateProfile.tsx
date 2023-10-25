@@ -156,7 +156,12 @@ const UpdateProfile = () => {
                       : `${process.env.REACT_APP_API}/${editedUser.picture}`
                     : ""
                 }
-                alt="User"
+                alt={editedUser.firstname
+                  .concat(".", editedUser.lastname)
+                  .split(" ")
+                  .map((n: any) => n[0])
+                  .join("")
+                  .toUpperCase()}
                 sx={{
                   width: "150px",
                   height: "150px",

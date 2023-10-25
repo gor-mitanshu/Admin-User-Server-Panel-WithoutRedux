@@ -149,12 +149,17 @@ const ViewUser = () => {
                         ? `${process.env.REACT_APP_API}/${user?.picture}`
                         : ""
                     }
-                    alt="User"
+                    alt={user.firstname
+                      .concat(".", user.lastname)
+                      .split(" ")
+                      .map((n: any) => n[0])
+                      .join("")
+                      .toUpperCase()}
                     sx={{
                       width: "150px",
                       height: "150px",
                       marginBottom: "10px",
-                      border: "2px solid black",
+                      border: "1px solid black",
                     }}
                   />
                   <Link

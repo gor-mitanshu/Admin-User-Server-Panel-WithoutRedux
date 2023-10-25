@@ -777,7 +777,7 @@ app.post('/signup', upload.single('picture'), async (req, res) => {
           });
 
           return res.status(200).send({
-               message: 'Admin Registered Successfully!!!',
+               message: 'User Registered Successfully!!!',
                data: newAdmin,
                success: true
           });

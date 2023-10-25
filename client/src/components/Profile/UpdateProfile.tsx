@@ -126,7 +126,7 @@ const UpdateProfile = () => {
   return (
     <Grid container padding={2} display={"flex"} flexDirection={"column"}>
       <Typography className="font" color="black" variant="h3" paddingBottom={3}>
-        Update Users Details
+        Update Details
       </Typography>
       <Grid
         item

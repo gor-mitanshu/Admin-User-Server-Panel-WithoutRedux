@@ -166,11 +166,17 @@ const UpdateUser = () => {
                     ? URL.createObjectURL(editedUser.picture)
                     : `${process.env.REACT_APP_API}/${editedUser.picture}`
                 }
-                alt="User"
+                alt={editedUser.firstname
+                  .concat(".", editedUser.lastname)
+                  .split(" ")
+                  .map((n: any) => n[0])
+                  .join("")
+                  .toUpperCase()}
                 sx={{
                   width: "150px",
                   height: "150px",
                   margin: "0 auto 20px",
+                  border: "1px solid black",
                 }}
               />
               {error && (
@@ -232,7 +238,7 @@ const UpdateUser = () => {
                 color="error"
                 size="large"
                 style={{ marginTop: "20px", marginRight: "5px" }}
-                onClick={() => navigate("/profile")}
+                onClick={() => navigate("/users")}
               >
                 Cancel
               </Button>

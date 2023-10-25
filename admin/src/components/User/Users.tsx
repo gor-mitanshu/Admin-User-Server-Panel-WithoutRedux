@@ -68,8 +68,12 @@ const Users = () => {
             ? `${process.env.REACT_APP_API}/${user.picture}`
             : undefined
         }
-        // alt={user.picture === undefined && user.firstname[0]}
-        alt={"User"}
+        alt={user.firstname
+          .concat(".", user.lastname)
+          .split(" ")
+          .map((n: any) => n[0])
+          .join("")
+          .toUpperCase()}
         // sx={{ height: "100%", width: "100%" }}
       />
     ),

@@ -10,7 +10,13 @@ import {
   Tooltip,
   Zoom,
 } from "@mui/material";
-import { Dashboard, Logout, Person, Person2TwoTone } from "@mui/icons-material";
+import {
+  Dashboard,
+  Key,
+  Logout,
+  Person,
+  Person2TwoTone,
+} from "@mui/icons-material";
 import "./Sidebar.css";
 import { NavLink, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -142,7 +148,7 @@ const Sidebar = (): JSX.Element => {
               >
                 <ListItemButton className="sidebar-listitem-btn">
                   <ListItemIcon className="sidebar-icon">
-                    <Person2TwoTone />
+                    <Key />
                   </ListItemIcon>
                   <ListItemText
                     primary="Change Password"

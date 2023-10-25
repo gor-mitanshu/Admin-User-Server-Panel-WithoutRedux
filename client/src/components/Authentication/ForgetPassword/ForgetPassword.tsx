@@ -46,7 +46,7 @@ const ForgetPassword = () => {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!user.email) {
-      showErrorWithTimeout("Please Enter Your Email", 3000);
+      showErrorWithTimeout("Please Enter Email", 3000);
       return;
     }
     setLoading(true);
@@ -73,7 +73,7 @@ const ForgetPassword = () => {
     setLoading(true);
 
     if (!user.otp) {
-      showErrorWithTimeout("Please Enter OTP", 3000);
+      showErrorWithTimeout("Please Enter OTP to verify", 3000);
       setLoading(false);
       return;
     }

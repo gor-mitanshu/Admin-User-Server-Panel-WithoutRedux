@@ -160,7 +160,8 @@ const ResetPassword = () => {
               <Button
                 type="submit"
                 variant="contained"
-                sx={{ mt: 2, mb: 2, width: "45%" }}
+                fullWidth
+                sx={{ mt: 2, mb: 2 }}
               >
                 Reset
               </Button>
