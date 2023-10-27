@@ -20,6 +20,13 @@ interface IUser {
   picture: string | File;
 }
 
+// function getRandomColor() {
+//   const r = Math.floor(Math.random() * 256);
+//   const g = Math.floor(Math.random() * 256);
+//   const b = Math.floor(Math.random() * 256);
+//   return `rgb(${r},${g},${b})`;
+// }
+
 const UpdateUser = () => {
   const pictureInputRef = useRef<HTMLInputElement | null>(null);
   const { id } = useParams();
@@ -178,6 +185,7 @@ const UpdateUser = () => {
                   margin: "0 auto 20px",
                   border: "1px solid black",
                 }}
+                // style={{ backgroundColor: getRandomColor() }}
               />
               {error && (
                 <Typography marginY={1} textAlign={"center"} color="error">

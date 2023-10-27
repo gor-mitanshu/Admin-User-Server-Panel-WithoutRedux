@@ -17,6 +17,13 @@ interface IUser {
   picture: string;
 }
 
+// function getRandomColor() {
+//   const r = Math.floor(Math.random() * 256);
+//   const g = Math.floor(Math.random() * 256);
+//   const b = Math.floor(Math.random() * 256);
+//   return `rgb(${r},${g},${b})`;
+// }
+
 const ViewUser = () => {
   const navigate = useNavigate();
   const { id } = useParams();
@@ -161,6 +168,7 @@ const ViewUser = () => {
                       marginBottom: "10px",
                       border: "1px solid black",
                     }}
+                    // style={{ backgroundColor: getRandomColor() }}
                   />
                   <Link
                     to={`${process.env.REACT_APP_API}/${user?.picture}`}

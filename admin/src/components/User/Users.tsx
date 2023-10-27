@@ -16,6 +16,31 @@ interface IUsers {
   password: string;
   picture: string;
 }
+
+// function getRandomColor() {
+//   const r = Math.floor(Math.random() * 256);
+//   const g = Math.floor(Math.random() * 256);
+//   const b = Math.floor(Math.random() * 256);
+//   return `rgb(${r},${g},${b})`;
+// }
+
+// function getRandomColor() {
+//   let letters = "BCDEF".split("");
+//   let color = "#";
+//   for (let i = 0; i < 6; i++) {
+//     color += letters[Math.floor(Math.random() * letters.length)];
+//   }
+//   return color;
+// }
+
+function getRandomColor() {
+  const red = Math.floor(Math.random() * 255);
+  const green = Math.floor(Math.random() * 255);
+  const blue = Math.floor(Math.random() * 255);
+  const opacity = 0.5;
+  return `rgba(${red}, ${green}, ${blue}, ${opacity})`;
+}
+
 const Users = () => {
   const navigate = useNavigate();
   const [users, setUsers] = useState<IUsers | any>([]);
@@ -75,6 +100,7 @@ const Users = () => {
           .join("")
           .toUpperCase()}
         // sx={{ height: "100%", width: "100%" }}
+        style={{ backgroundColor: getRandomColor() }}
       />
     ),
     actions: user.actions,
