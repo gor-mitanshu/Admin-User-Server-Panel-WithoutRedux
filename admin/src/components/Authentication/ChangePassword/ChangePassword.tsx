@@ -30,7 +30,7 @@ const Copyright = (props: any) => {
       {...props}
     >
       {"Copyright © "}
-      <Link color="inherit" to="https://brainsquaretech.com/">
+      <Link color="inherit" target="_blank" to="https://brainsquaretech.com/">
         BrainSquare Tech
       </Link>{" "}
       {new Date().getFullYear()}
@@ -160,13 +160,14 @@ const ResetPassword = () => {
               <Button
                 type="submit"
                 variant="contained"
-                sx={{ mt: 2, mb: 2, width: "45%" }}
+                fullWidth
+                sx={{ my: 2 }}
               >
                 Reset
               </Button>
             </Box>
           </Box>
-          <Copyright sx={{ mt: 2, mb: 2 }} />
+          <Copyright sx={{ my: 2 }} />
         </Paper>
       </Container>
     </ThemeProvider>

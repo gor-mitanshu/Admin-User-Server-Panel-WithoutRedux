@@ -102,7 +102,7 @@ const ForgetPassword = () => {
 
   return (
     <ThemeProvider theme={defaultTheme}>
-      <Container component="main" maxWidth="xs">
+      <Container component="main" maxWidth="xs" sx={{ mt: 4 }}>
         <CssBaseline />
         <Paper
           elevation={5}
@@ -190,19 +190,23 @@ const ForgetPassword = () => {
               </Button>
             </Box>
           </div>
+          <Typography
+            variant="body2"
+            color="text.secondary"
+            align="center"
+            sx={{ mt: 6 }}
+          >
+            {`Copyright © ${new Date().getFullYear()} `}
+            <Link
+              target="_blank"
+              color="inherit"
+              to="https://brainsquaretech.com/"
+            >
+              BrainSquare Tech
+            </Link>
+            {"."}
+          </Typography>
         </Paper>
-        <Typography
-          variant="body2"
-          color="text.secondary"
-          align="center"
-          sx={{ mt: 2 }}
-        >
-          {`Copyright © ${new Date().getFullYear()} `}
-          <Link color="inherit" to="https://brainsquaretech.com/">
-            BrainSquare Tech
-          </Link>
-          {"."}
-        </Typography>
       </Container>
     </ThemeProvider>
   );

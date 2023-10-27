@@ -7,7 +7,7 @@ const bcrypt = require('bcrypt');
 const multer = require('multer');
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
-const otpGenerator = require('otp-generator');
+// const otpGenerator = require('otp-generator');
 const path = require('path');
 const fs = require('fs');
 
@@ -27,6 +27,18 @@ mongoose.connect(`${process.env.MONGO_URL}/${process.env.MONGO_DBNAME}`).then(su
 }).catch(err => {
      console.log(`${err.message}`.bgRed.black);
 });
+
+function generateOTP () {
+
+     // Declare a digits variable  
+     // which stores all digits 
+     let digits = '0123456789';
+     let OTP = '';
+     for (let i = 0; i < 4; i++) {
+          OTP += digits[Math.floor(Math.random() * 10)];
+     }
+     return OTP;
+}
 
 const PORT = process.env.PORT;
 app.listen(PORT, () => {
@@ -568,10 +580,11 @@ app.post('/admin-forgetpassword', async (req, res) => {
           const admin = await Admin.findOne({ email: email });
 
           if (!admin) {
-               return res.status(404).json({ message: 'Admin not found' });
+               return res.status(404).json({ message: 'Email not found!!!' });
           }
 
-          const otp = otpGenerator.generate(6, { digits: true, alphabets: false, upperCase: false });
+          // const otp = otpGenerator.generate(6, { digits: true, alphabets: false, upperCase: false });
+          const otp = generateOTP();
           const otpExpiry = new Date();
           otpExpiry.setMinutes(otpExpiry.getMinutes() + 15);
 
@@ -1004,7 +1017,8 @@ app.post('/forgetpassword', async (req, res) => {
                return res.status(404).send({ message: 'Admin not found' });
           }
 
-          const otp = otpGenerator.generate(6, { digits: true, alphabets: false, upperCase: false });
+          // const otp = otpGenerator.generate(6, { digits: true, alphabets: false, upperCase: false });
+          const otp = generateOTP();
           const otpExpiry = new Date();
           otpExpiry.setMinutes(otpExpiry.getMinutes() + 15);
 
