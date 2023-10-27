@@ -60,104 +60,48 @@ const Sidebar = (): JSX.Element => {
     navigate("/sign-in");
     toast.success("Logged Out Successfully");
   };
+
+  const sidebarItems = [
+    { label: "Dashboard", icon: <Dashboard />, path: "/dashboard" },
+    { label: "Profile", icon: <Person />, path: "/profile" },
+    { label: "Users", icon: <Person2TwoTone />, path: "/users" },
+    { label: "Change Password", icon: <Key />, path: `/changepassword/${id}` },
+  ];
+
   return (
     <>
       <Grid className="sidebar">
         <Grid item lg={12} sm={6} xs={3}>
           <Toolbar />
-          <Divider />
 
-          <NavLink to={"/dashboard"} className={"link"}>
-            <ListItem disablePadding className="sidebar-item">
-              <Tooltip
-                title={"Dashboard"}
-                arrow
-                TransitionComponent={Zoom}
-                enterDelay={800}
-                leaveDelay={200}
-                placement="bottom"
-              >
-                <ListItemButton className="sidebar-listitem-btn">
-                  <ListItemIcon className="sidebar-icon">
-                    <Dashboard />
-                  </ListItemIcon>
-                  <ListItemText
-                    primary="Dashboard"
-                    sx={{ whiteSpace: "nowrap" }}
-                  />
-                </ListItemButton>
-              </Tooltip>
-            </ListItem>
-          </NavLink>
-          <Divider />
+          {sidebarItems.map((item, index) => (
+            <div key={index}>
+              <Divider />
+              <NavLink to={item.path} className="link">
+                <ListItem disablePadding className="sidebar-item">
+                  <Tooltip
+                    title={item.label}
+                    arrow
+                    TransitionComponent={Zoom}
+                    enterDelay={800}
+                    leaveDelay={200}
+                    placement="bottom"
+                  >
+                    <ListItemButton className="sidebar-listitem-btn">
+                      <ListItemIcon className="sidebar-icon">
+                        {item.icon}
+                      </ListItemIcon>
+                      <ListItemText
+                        primary={item.label}
+                        sx={{ whiteSpace: "nowrap" }}
+                      />
+                    </ListItemButton>
+                  </Tooltip>
+                </ListItem>
+              </NavLink>
+            </div>
+          ))}
 
-          <NavLink to={"/profile"} className={"link"}>
-            <ListItem disablePadding className="sidebar-item">
-              <Tooltip
-                title={"Profile"}
-                arrow
-                TransitionComponent={Zoom}
-                enterDelay={800}
-                leaveDelay={200}
-                placement="bottom"
-              >
-                <ListItemButton className="sidebar-listitem-btn">
-                  <ListItemIcon className="sidebar-icon">
-                    <Person />
-                  </ListItemIcon>
-                  <ListItemText
-                    primary="Profile"
-                    sx={{ whiteSpace: "nowrap" }}
-                  />
-                </ListItemButton>
-              </Tooltip>
-            </ListItem>
-          </NavLink>
-          <Divider />
-
-          <NavLink to={"/users"} className={"link"}>
-            <ListItem disablePadding className="sidebar-item">
-              <Tooltip
-                title={"Users"}
-                arrow
-                TransitionComponent={Zoom}
-                enterDelay={800}
-                leaveDelay={200}
-                placement="bottom"
-              >
-                <ListItemButton className="sidebar-listitem-btn">
-                  <ListItemIcon className="sidebar-icon">
-                    <Person2TwoTone />
-                  </ListItemIcon>
-                  <ListItemText primary="Users" sx={{ whiteSpace: "nowrap" }} />
-                </ListItemButton>
-              </Tooltip>
-            </ListItem>
-          </NavLink>
-          <Divider />
-
-          <NavLink to={`/changepassword/${id}`} className={"link"}>
-            <ListItem disablePadding className="sidebar-item">
-              <Tooltip
-                title={"Change Password"}
-                arrow
-                TransitionComponent={Zoom}
-                enterDelay={800}
-                leaveDelay={200}
-                placement="bottom"
-              >
-                <ListItemButton className="sidebar-listitem-btn">
-                  <ListItemIcon className="sidebar-icon">
-                    <Key />
-                  </ListItemIcon>
-                  <ListItemText
-                    primary="Change Password"
-                    sx={{ whiteSpace: "nowrap" }}
-                  />
-                </ListItemButton>
-              </Tooltip>
-            </ListItem>
-          </NavLink>
           <Divider />
 
           <ListItem disablePadding className="sidebar-item logout">
