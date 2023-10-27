@@ -31,7 +31,7 @@ const Copyright = (props: any) => {
       {...props}
     >
       {"Copyright © "}
-      <Link color="inherit" to="https://brainsquaretech.com/">
+      <Link target="_blank" color="inherit" to="https://brainsquaretech.com/">
         BrainSquare Tech
       </Link>{" "}
       {new Date().getFullYear()}
@@ -177,7 +177,7 @@ const SignIn = () => {
               </Grid>
             </Box>
           </Box>
-          <Copyright sx={{ mt: 4, mb: 2 }} />
+          <Copyright sx={{ my: 2 }} />
         </Paper>
       </Container>
     </ThemeProvider>

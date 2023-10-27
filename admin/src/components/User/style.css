@@ -17,3 +17,8 @@
     opacity: 1;
   }
 }
+
+.header {
+  background: black !important;
+  color: white !important;
+}

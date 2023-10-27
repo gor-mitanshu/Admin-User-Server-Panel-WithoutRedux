@@ -211,6 +211,7 @@ const Users = () => {
                 <DataGrid
                   columns={columns}
                   rows={rows}
+                  density="comfortable"
                   // rowHeight={70}
                   // getRowHeight={() => "auto"}
                   // getEstimatedRowHeight={() => 200}

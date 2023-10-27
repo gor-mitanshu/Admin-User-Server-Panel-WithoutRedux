@@ -111,7 +111,7 @@ const SidebarChangePassword = () => {
               Change Password
             </Typography>
             {error && (
-              <Typography marginY={1} textAlign={"center"} color="error">
+              <Typography marginTop={2} textAlign={"center"} color="error">
                 <b>Error:</b> {error}
               </Typography>
             )}
@@ -119,7 +119,7 @@ const SidebarChangePassword = () => {
               component="form"
               onSubmit={handleSubmit}
               noValidate
-              sx={{ mt: 1 }}
+              // sx={{ mt: 1 }}
             >
               <TextField
                 type={showPassword ? "text" : "password"}

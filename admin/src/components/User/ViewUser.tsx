@@ -78,6 +78,7 @@ const ViewUser = () => {
     setComposeModalOpen(false);
   };
 
+  console.log(user);
   return (
     <>
       <Grid container padding={2} display={"flex"} flexDirection={"column"}>
@@ -170,20 +171,22 @@ const ViewUser = () => {
                     }}
                     // style={{ backgroundColor: getRandomColor() }}
                   />
-                  <Link
-                    to={`${process.env.REACT_APP_API}/${user?.picture}`}
-                    target="_blank"
-                  >
-                    <Button
-                      type="button"
-                      // color="info"
-                      sx={{ color: "black", borderColor: "black" }}
-                      size="large"
-                      variant="outlined"
+                  {user.picture !== "images/undefined" && (
+                    <Link
+                      to={`${process.env.REACT_APP_API}/${user?.picture}`}
+                      target="_blank"
                     >
-                      View Image
-                    </Button>
-                  </Link>
+                      <Button
+                        type="button"
+                        // color="info"
+                        sx={{ color: "black", borderColor: "black" }}
+                        size="large"
+                        variant="outlined"
+                      >
+                        View Image
+                      </Button>
+                    </Link>
+                  )}
                 </div>
                 <div>
                   <Typography variant="h4" marginBottom={2}>

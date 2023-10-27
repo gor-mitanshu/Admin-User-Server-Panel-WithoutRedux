@@ -156,8 +156,15 @@ const UpdateProfile = () => {
                       : `${process.env.REACT_APP_API}/${editedUser.picture}`
                     : ""
                 }
+                // Firstname and Lastname Loop and getting initial letter
+                // alt={editedUser.firstname
+                //   .concat(".", editedUser.lastname)
+                //   .split(" ")
+                //   .map((n: any) => n[0])
+                //   .join("")
+                //   .toUpperCase()}
+
                 alt={editedUser.firstname
-                  .concat(".", editedUser.lastname)
                   .split(" ")
                   .map((n: any) => n[0])
                   .join("")
