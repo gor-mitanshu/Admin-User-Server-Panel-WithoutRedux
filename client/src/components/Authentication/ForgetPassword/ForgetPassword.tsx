@@ -157,18 +157,14 @@ const ForgetPassword = () => {
                     value={user.otp}
                     onChange={handleChange}
                   />
-                  {loading ? (
-                    <Loader />
-                  ) : (
-                    <Button
-                      type="button"
-                      variant="contained"
-                      sx={{ mt: 2, width: "100%" }}
-                      onClick={handleOTPSuccess}
-                    >
-                      Verify OTP
-                    </Button>
-                  )}
+                  <Button
+                    type="button"
+                    variant="contained"
+                    sx={{ mt: 2, width: "100%" }}
+                    onClick={handleOTPSuccess}
+                  >
+                    {loading ? <Loader /> : "Verify OTP"}
+                  </Button>
                 </div>
               ) : (
                 <Button
