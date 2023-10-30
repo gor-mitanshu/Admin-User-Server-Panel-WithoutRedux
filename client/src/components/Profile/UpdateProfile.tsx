@@ -118,7 +118,7 @@ const UpdateProfile = () => {
         return;
       }
     } catch (error: any) {
-      showErrorWithTimeout(error.message, 3000);
+      showErrorWithTimeout(error.response.data.message, 3000);
       return;
     }
   };

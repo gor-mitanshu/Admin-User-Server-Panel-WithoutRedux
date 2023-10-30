@@ -73,8 +73,9 @@ const ComposeEmailModal: React.FC<ComposeEmailModalProps> = ({
           body: "",
         });
       }
-    } catch (error) {
+    } catch (error: any) {
       setIsLoading(false);
+      console.log(error.response.data.message);
     }
   };
 

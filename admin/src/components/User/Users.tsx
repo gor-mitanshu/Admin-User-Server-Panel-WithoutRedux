@@ -38,7 +38,7 @@ const Users = () => {
         setUsers(res.data.data);
       }
     } catch (error: any) {
-      console.log(error.message);
+      console.log(error.response.data.message);
     }
   };
   useEffect(() => {
@@ -58,7 +58,7 @@ const Users = () => {
         toast.error(res.data.message);
       }
     } catch (error: any) {
-      toast.error(error.data.message);
+      toast.error(error.response.data.message);
     }
   };
 

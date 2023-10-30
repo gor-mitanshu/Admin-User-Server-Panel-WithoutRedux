@@ -101,14 +101,14 @@ const Dashboard = (): JSX.Element => {
                   textAlign={"center"}
                   component="div"
                   variant="h5"
-                  sx={{ fontSize: "2rem", position: "relative", zIndex: 1 }}
+                  sx={{ fontSize: "2rem", position: "relative" }}
                 >
                   Total Users
                 </Typography>
                 <Typography
                   textAlign={"center"}
                   variant="h5"
-                  color="black"
+                  color="#b06900"
                   component="div"
                   sx={{ position: "relative" }}
                 >
