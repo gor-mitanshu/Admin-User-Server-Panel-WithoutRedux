@@ -7,9 +7,10 @@ const User = new mongoose.Schema({
      phone: { type: String, required: true, minlength: 10, maxlength: 10 },
      picture: { type: String, required: false },
      password: { type: String, required: true },
+     status: { type: String, default: "active" },
      role: { type: String },
      otp: { type: String, },
-     otpExpiry: { Date }
+     otpExpiry: { Date },
 }, { timestamps: true });
 
 const UserModel = mongoose.model('user', User);

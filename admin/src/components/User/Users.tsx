@@ -1,9 +1,9 @@
-import { Grid, Typography, Avatar } from "@mui/material";
+import { Grid, Typography, Avatar, Chip } from "@mui/material";
 import { DataGrid, GridActionsCellItem, GridToolbar } from "@mui/x-data-grid";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import Loader from "../Loader/Loader";
-import { Delete, Edit, Visibility } from "@mui/icons-material";
+import { Block, Check, Delete, Edit, Visibility } from "@mui/icons-material";
 import { useNavigate } from "react-router";
 import { toast } from "react-toastify";
 
@@ -16,22 +16,6 @@ interface IUsers {
   password: string;
   picture: string;
 }
-
-// function getRandomColor() {
-//   const r = Math.floor(Math.random() * 256);
-//   const g = Math.floor(Math.random() * 256);
-//   const b = Math.floor(Math.random() * 256);
-//   return `rgb(${r},${g},${b})`;
-// }
-
-// function getRandomColor() {
-//   let letters = "BCDEF".split("");
-//   let color = "#";
-//   for (let i = 0; i < 6; i++) {
-//     color += letters[Math.floor(Math.random() * letters.length)];
-//   }
-//   return color;
-// }
 
 function getRandomColor() {
   const red = Math.floor(Math.random() * 255);
@@ -103,7 +87,7 @@ const Users = () => {
         style={{ backgroundColor: getRandomColor() }}
       />
     ),
-    actions: user.actions,
+    status: user.status,
   }));
 
   const columns: any = [
@@ -112,7 +96,9 @@ const Users = () => {
       headerName: "ID",
       headerClassName: "header",
       description: "ID",
-      flex: 0,
+      flex: 0.1,
+      headerAlign: "center",
+      align: "center",
     },
     {
       field: "picture",
@@ -120,8 +106,10 @@ const Users = () => {
       headerClassName: "header",
       description: "Picture",
       renderCell: (params: any) => params.value,
-      flex: 0.6,
-      editable: true,
+      flex: 0.4,
+      // editable: true,
+      headerAlign: "center",
+      align: "center",
     },
     {
       field: "firstname",
@@ -129,7 +117,9 @@ const Users = () => {
       headerClassName: "header",
       description: "Firstname",
       flex: 0.8,
-      editable: true,
+      // editable: true,
+      headerAlign: "center",
+      align: "center",
     },
     {
       field: "lastname",
@@ -137,7 +127,9 @@ const Users = () => {
       headerClassName: "header",
       description: "Lastname",
       flex: 0.8,
-      editable: true,
+      // editable: true,
+      headerAlign: "center",
+      align: "center",
     },
     {
       field: "email",
@@ -145,7 +137,9 @@ const Users = () => {
       headerClassName: "header",
       description: "Email",
       flex: 1.5,
-      editable: true,
+      // editable: true,
+      headerAlign: "center",
+      align: "center",
     },
     {
       field: "phone",
@@ -153,7 +147,43 @@ const Users = () => {
       headerClassName: "header",
       description: "Contact",
       flex: 1,
-      editable: true,
+      // editable: true,
+      headerAlign: "center",
+      align: "center",
+    },
+    {
+      field: "status",
+      headerName: "Status",
+      headerClassName: "header",
+      description: "Status",
+      flex: 1,
+      headerAlign: "center",
+      align: "center",
+      renderCell: (params: any) => {
+        return (
+          <Chip
+            label={params.row.status.toUpperCase()}
+            icon={
+              params.row.status === "active" ? (
+                <Check color="success" />
+              ) : (
+                <Block color="error" />
+              )
+            }
+            size="medium"
+            variant="outlined"
+            sx={{ width: "130px" }}
+            className={
+              params.row.status === "active"
+                ? "active"
+                : params.row.status === "inactive"
+                ? "inactive"
+                : ""
+            }
+            color="info"
+          />
+        );
+      },
     },
     {
       field: "actions",
@@ -162,6 +192,8 @@ const Users = () => {
       description: "Actions",
       flex: 1,
       type: "actions",
+      headerAlign: "center",
+      align: "center",
       getActions: (params: any) => [
         <GridActionsCellItem
           icon={<Visibility color={"primary"} />}

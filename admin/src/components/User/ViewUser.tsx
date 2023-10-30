@@ -15,14 +15,8 @@ interface IUser {
   email: string;
   phone: string;
   picture: string;
+  status: string;
 }
-
-// function getRandomColor() {
-//   const r = Math.floor(Math.random() * 256);
-//   const g = Math.floor(Math.random() * 256);
-//   const b = Math.floor(Math.random() * 256);
-//   return `rgb(${r},${g},${b})`;
-// }
 
 const ViewUser = () => {
   const navigate = useNavigate();
@@ -197,6 +191,32 @@ const ViewUser = () => {
                   </Typography>
                   <Typography variant="body1" marginBottom={2}>
                     <b>Phone:</b> {user?.phone}
+                  </Typography>
+                  <Typography variant="body1" marginBottom={2}>
+                    <b>Status:</b>{" "}
+                    <span
+                      style={{
+                        // backgroundColor:
+                        //   user?.status === "active"
+                        //     ? "rgba(0, 128, 0, 0.4)"
+                        //     : user?.status === "inactive"
+                        //     ? "rgba(255, 0, 0, 0.4)"
+                        //     : "inherit",
+                        color:
+                          user?.status === "active"
+                            ? "rgb(43,182,115)"
+                            : user?.status === "inactive"
+                            ? "rgb(255,0,0)"
+                            : "inherit",
+                        fontWeight:
+                          user?.status === "active" ||
+                          user?.status === "inactive"
+                            ? 700
+                            : "inherit",
+                      }}
+                    >
+                      {user?.status.toUpperCase()}
+                    </span>
                   </Typography>
                 </div>
               </div>

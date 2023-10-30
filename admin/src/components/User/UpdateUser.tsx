@@ -9,6 +9,7 @@ import TextField from "@mui/material/TextField";
 import Paper from "@mui/material/Paper";
 import { toast } from "react-toastify";
 import Loader from "../Loader/Loader";
+import { MenuItem } from "@mui/material";
 
 interface IUser {
   id?: string;
@@ -18,14 +19,8 @@ interface IUser {
   phone: string;
   password: string;
   picture: string | File;
+  status: string;
 }
-
-// function getRandomColor() {
-//   const r = Math.floor(Math.random() * 256);
-//   const g = Math.floor(Math.random() * 256);
-//   const b = Math.floor(Math.random() * 256);
-//   return `rgb(${r},${g},${b})`;
-// }
 
 const UpdateUser = () => {
   const pictureInputRef = useRef<HTMLInputElement | null>(null);
@@ -41,7 +36,9 @@ const UpdateUser = () => {
     phone: "",
     password: "",
     picture: "",
+    status: "",
   });
+  const statusOptions = ["active", "inactive"];
 
   useEffect(() => {
     const getUser = async () => {
@@ -115,7 +112,7 @@ const UpdateUser = () => {
       formData.append("lastname", editedUser.lastname);
       formData.append("email", editedUser.email);
       formData.append("phone", editedUser.phone);
-
+      formData.append("status", editedUser.status);
       if (imageChanged && editedUser.picture instanceof File) {
         formData.append("picture", editedUser.picture);
       } else {
@@ -228,6 +225,22 @@ const UpdateUser = () => {
                     value={editedUser?.phone}
                     onChange={handleChange}
                   />
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    select
+                    fullWidth
+                    label="Status"
+                    name="status"
+                    value={editedUser?.status}
+                    onChange={handleChange}
+                  >
+                    {statusOptions.map((status) => (
+                      <MenuItem key={status} value={status}>
+                        {status.toUpperCase()}
+                      </MenuItem>
+                    ))}
+                  </TextField>
                 </Grid>
                 <Grid item xs={12}>
                   <TextField

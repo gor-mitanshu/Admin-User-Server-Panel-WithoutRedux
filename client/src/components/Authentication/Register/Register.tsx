@@ -130,7 +130,7 @@ const SignUp = () => {
         showErrorWithTimeout("Unable to Register", 3000);
       }
     } catch (error: any) {
-      showErrorWithTimeout(error.message, 3000);
+      showErrorWithTimeout(error.response.data.message, 3000);
     }
   };
 

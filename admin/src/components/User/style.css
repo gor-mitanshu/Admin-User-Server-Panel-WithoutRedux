@@ -22,3 +22,13 @@
   background: black !important;
   color: white !important;
 }
+.active {
+  background-color: rgba(0, 128, 0, 0.4) !important;
+  color: darkgreen !important;
+  font-weight: 700 !important;
+}
+.inactive {
+  background-color: rgba(255, 0, 0, 0.4) !important;
+  color: darkred !important;
+  font-weight: 700 !important;
+}

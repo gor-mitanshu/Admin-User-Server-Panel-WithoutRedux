@@ -276,12 +276,11 @@ app.put('/updateAdmin/:id', upload.single('picture'), async (req, res) => {
           };
           if (req?.file) {
                updateAdminFields.picture = `images/${req?.file?.filename}`;
-          }
-
-          if (existingUser.picture) {
-               const imagePath = path.join(__dirname, 'masterImages', existingUser.picture.replace('images/', ''));
-               if (fs.existsSync(imagePath)) {
-                    fs.unlinkSync(imagePath);
+               if (existingUser.picture) {
+                    const imagePath = path.join(__dirname, 'masterImages', existingUser.picture.replace('images/', ''));
+                    if (fs.existsSync(imagePath)) {
+                         fs.unlinkSync(imagePath);
+                    }
                }
           }
 
@@ -378,7 +377,7 @@ app.put('/updateUser/:id', upload.single('picture'), async (req, res) => {
                message: "Id not found",
           });
      }
-     const { firstname, lastname, email, phone } = req.body;
+     const { firstname, lastname, email, phone, status } = req.body;
      if (!firstname) {
           return res.status(500).send({ message: "Please Enter the Firstname", success: false });
      }
@@ -391,7 +390,10 @@ app.put('/updateUser/:id', upload.single('picture'), async (req, res) => {
      if (!phone) {
           return res.status(500).send({ message: "Please Enter the Phone", success: false });
      }
-     if (!firstname || !lastname || !email || !phone) {
+     if (!status) {
+          return res.status(500).send({ message: "Please Enter the Status", success: false });
+     }
+     if (!firstname || !lastname || !email || !phone || !status) {
           return res.status(500).send({ message: "Please Enter all the fields", success: false });
      }
      try {
@@ -401,17 +403,19 @@ app.put('/updateUser/:id', upload.single('picture'), async (req, res) => {
                lastname: lastname,
                email: email,
                phone: phone,
+               status: status
           };
 
           if (req?.file) {
                updateUserFields.picture = `images/${req?.file?.filename}`;
-          }
-          if (existingUser.picture) {
-               const imagePath = path.join(__dirname, 'masterImages', existingUser.picture.replace('images/', ''));
-               if (fs.existsSync(imagePath)) {
-                    fs.unlinkSync(imagePath);
+               if (existingUser.picture) {
+                    const imagePath = path.join(__dirname, 'masterImages', existingUser.picture.replace('images/', ''));
+                    if (fs.existsSync(imagePath)) {
+                         fs.unlinkSync(imagePath);
+                    }
                }
           }
+
           const updateUser = await User.findOneAndUpdate(
                { _id: id },
                {
@@ -906,70 +910,6 @@ app.get('/loggeduser/:id', async (req, res) => {
      }
 });
 
-// Update User by id
-app.put('/updateuser/:id', upload.single('picture'), async (req, res) => {
-     const { id } = req.params;
-     if (!id) {
-          return res.status(500).send({
-               success: false,
-               message: "Id not found",
-          });
-     }
-     const { firstname, lastname, email, phone } = req.body;
-     if (!firstname) {
-          return res.status(500).send({ message: "Please Enter the Firstname", success: false });
-     }
-     if (!lastname) {
-          return res.status(500).send({ message: "Please Enter the Lastname", success: false });
-     }
-     if (!email) {
-          return res.status(500).send({ message: "Please Enter the Email", success: false });
-     }
-     if (!phone) {
-          return res.status(500).send({ message: "Please Enter the Phone", success: false });
-     }
-     if (!firstname || !lastname || !email || !phone) {
-          return res.status(500).send({ message: "Please Enter all the fields", success: false });
-     }
-     try {
-          const existingUser = await User.findById(id);
-          const updateAdminFields = {
-               firstname: firstname,
-               lastname: lastname,
-               email: email,
-               phone: phone,
-          };
-          if (req?.file) {
-               updateUserFields.picture = `images/${req?.file?.filename}`;
-          }
-          const updateUser = await User.findOneAndUpdate(
-               { _id: id },
-               {
-                    $set: updateUserFields,
-               },
-               { new: true }
-          );
-          if (!updateUser) {
-               return res.status(500).send({
-                    message: "Update Unsuccessful. Please try again later",
-                    error: error.message,
-                    success: true
-               })
-          }
-          return res.status(200).send({
-               message: "Updated Successfully!!!",
-               data: updateUser,
-               success: true
-          });
-     } catch (error) {
-          return res.status(400).send({
-               success: false,
-               message: "Internal Server Error",
-               error: error.messsage
-          });
-     }
-});
-
 // Change User Password
 app.put('/changepassword/:id', async (req, res) => {
      const { id } = req.params;
@@ -1150,5 +1090,17 @@ app.post('/resetpassword/:id/:token', async (req, res) => {
                message: "Something went wrong",
                error: error.messsage
           });
+     }
+});
+
+// Add custom field using querry
+app.post('/addActivefield', async (req, res) => {
+     try {
+          const result = await User.updateMany({}, { $set: { status: "active" } });
+          console.log('User records updated successfully.');
+          return res.status(200).send('User records updated successfully.');
+     } catch (err) {
+          console.error('Error updating user records:', err);
+          return res.status(500).send('Error updating user records');
      }
 });
