@@ -66,8 +66,7 @@ const EChart = () => {
           value: chartData[category],
           name: category.toUpperCase(),
           itemStyle: {
-            color:
-              category === "active" ? "rgb(145,196,149)" : "rgb(247,145,149)",
+            color: category === "active" ? "#29a744" : "#dc3546",
             border: category === "active" ? "green" : "red",
           },
         })),

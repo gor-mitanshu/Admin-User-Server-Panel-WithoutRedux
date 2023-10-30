@@ -3,6 +3,7 @@ import "../Dashboard/DashboardPage.css";
 import { Box, Card, CardContent, Grid, Typography } from "@mui/material";
 import EChart from "../Chart/EChartData";
 import axios from "axios";
+import { Block, Check, Group } from "@mui/icons-material";
 
 const Dashboard = (): JSX.Element => {
   const [userCounts, setUserCounts] = useState({
@@ -39,26 +40,30 @@ const Dashboard = (): JSX.Element => {
     <>
       <Grid container padding={2} spacing={1}>
         <Grid item lg={4} md={6} sm={12} xs={12}>
-          <Card className="card card-active">
-            <Box className="card-box" />
+          <Card
+            sx={{
+              background: "#29a744",
+              color: "#fff",
+            }}
+          >
             <Box sx={{ display: "flex", flexDirection: "column" }}>
               <CardContent>
                 <Typography
-                  textAlign={"center"}
                   component="div"
                   variant="h5"
-                  sx={{ fontSize: "2rem", position: "relative", zIndex: 1 }}
-                >
-                  Total Active Users
-                </Typography>
-                <Typography
-                  textAlign={"center"}
-                  variant="h5"
-                  color="black"
-                  component="div"
-                  sx={{ position: "relative" }}
+                  sx={{ fontSize: "2rem" }}
                 >
                   {userCounts.active}
+                </Typography>
+                <Typography
+                  variant="subtitle1"
+                  color="#fff"
+                  component="div"
+                  display={"flex"}
+                  alignItems={"center"}
+                >
+                  <Check color="inherit" />
+                  Active Users
                 </Typography>
               </CardContent>
             </Box>
@@ -66,26 +71,30 @@ const Dashboard = (): JSX.Element => {
         </Grid>
 
         <Grid item lg={4} md={6} sm={12} xs={12}>
-          <Card className="card card-inactive">
-            <Box className="card-box" />
+          <Card
+            sx={{
+              background: "#dc3546",
+              color: "#fff",
+            }}
+          >
             <Box sx={{ display: "flex", flexDirection: "column" }}>
               <CardContent>
                 <Typography
-                  textAlign={"center"}
                   component="div"
                   variant="h5"
-                  sx={{ fontSize: "2rem", position: "relative", zIndex: 1 }}
-                >
-                  Total Inactive Users
-                </Typography>
-                <Typography
-                  textAlign={"center"}
-                  variant="h5"
-                  color="black"
-                  component="div"
-                  sx={{ position: "relative" }}
+                  sx={{ fontSize: "2rem" }}
                 >
                   {userCounts.inactive}
+                </Typography>
+                <Typography
+                  variant="subtitle1"
+                  color="#fff"
+                  component="div"
+                  display={"flex"}
+                  alignItems={"center"}
+                >
+                  <Block color="inherit" />
+                  Inactive Users
                 </Typography>
               </CardContent>
             </Box>
@@ -93,26 +102,30 @@ const Dashboard = (): JSX.Element => {
         </Grid>
 
         <Grid item lg={4} md={12} sm={12} xs={12}>
-          <Card className="card card-total-users">
-            <Box className="card-box" />
+          <Card
+            sx={{
+              background: "#f8c12b",
+              color: "#fff",
+            }}
+          >
             <Box sx={{ display: "flex", flexDirection: "column" }}>
               <CardContent>
                 <Typography
-                  textAlign={"center"}
                   component="div"
                   variant="h5"
-                  sx={{ fontSize: "2rem", position: "relative" }}
-                >
-                  Total Users
-                </Typography>
-                <Typography
-                  textAlign={"center"}
-                  variant="h5"
-                  color="#b06900"
-                  component="div"
-                  sx={{ position: "relative" }}
+                  sx={{ fontSize: "2rem" }}
                 >
                   {userCounts.total}
+                </Typography>
+                <Typography
+                  variant="subtitle1"
+                  color="#fff"
+                  component="div"
+                  display={"flex"}
+                  alignItems={"center"}
+                >
+                  <Group color="inherit" />
+                  Total Users
                 </Typography>
               </CardContent>
             </Box>

@@ -390,10 +390,7 @@ app.put('/updateUser/:id', upload.single('picture'), async (req, res) => {
      if (!phone) {
           return res.status(500).send({ message: "Please Enter the Phone", success: false });
      }
-     if (!status) {
-          return res.status(500).send({ message: "Please Enter the Status", success: false });
-     }
-     if (!firstname || !lastname || !email || !phone || !status) {
+     if (!firstname || !lastname || !email || !phone) {
           return res.status(500).send({ message: "Please Enter all the fields", success: false });
      }
      try {
@@ -764,6 +761,7 @@ app.post('/signup', upload.single('picture'), async (req, res) => {
                password: hashedPassword,
                role: "user",
                picture: `images/${req?.file?.filename}`,
+               status: "active"
           });
           await newAdmin.save();
 
