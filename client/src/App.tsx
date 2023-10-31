@@ -17,8 +17,14 @@ function App() {
   return (
     <div className="App">
       <Routes>
-        <Route path={"/sign-in"} element={<SignIn />} />
-        <Route path={"/sign-up"} element={<SignUp />} />
+        <Route
+          path={"/sign-in"}
+          element={<SignIn height={"100vh"} width={"100%"} />}
+        />
+        <Route
+          path={"/sign-up"}
+          element={<SignUp height={"100vh"} width={"100%"} />}
+        />
         <Route path={"/forget-password"} element={<ForgetPassword />} />
         <Route
           path={"/reset-password/:id/:token"}

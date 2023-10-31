@@ -30,7 +30,7 @@ const ViewUser = () => {
     const viewUser = async () => {
       if (!!id) {
         const res = await axios.get(
-          `${process.env.REACT_APP_API}/getUser/${id}`
+          `${process.env.REACT_APP_API}/user/getUser/${id}`
         );
         setUser(res.data.data);
       }
@@ -44,7 +44,7 @@ const ViewUser = () => {
         const accessToken = localStorage.getItem("token");
         if (accessToken) {
           const res = await axios.get(
-            `${process.env.REACT_APP_API}/loggedadmin`,
+            `${process.env.REACT_APP_API}/admin/loggedadmin`,
             {
               headers: { Authorization: `Bearer ${accessToken}` },
             }

@@ -16,6 +16,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useAuth } from "../../ProtectedRoute/AuthContext";
+import Loader from "../../Loader/Loader";
 
 interface IUser {
   email: string;
@@ -42,7 +43,7 @@ const Copyright = (props: any) => {
 
 const defaultTheme = createTheme();
 
-const SignIn = () => {
+const SignIn = ({ height, width }: any) => {
   const { login } = useAuth();
   const navigate = useNavigate();
   const { state } = useLocation();
@@ -51,7 +52,7 @@ const SignIn = () => {
     email: "",
     password: "",
   });
-
+  const [loading, setLoading] = useState<boolean>(false);
   const showErrorWithTimeout = (errorMessage: string, timeout: number) => {
     setError(errorMessage);
     setTimeout(() => {
@@ -82,14 +83,20 @@ const SignIn = () => {
         email: user.email,
         password: user.password,
       };
-      const res = await axios.post(`${process.env.REACT_APP_API}/signin`, body);
+      const res = await axios.post(
+        `${process.env.REACT_APP_API}/user/signin`,
+        body
+      );
       if (!!res) {
+        setLoading(false);
         login(res.data);
         localStorage.setItem("token", JSON.stringify(res.data));
         navigate(state?.path || "/", { replace: true });
         toast.success(res.data.message);
       }
+      setLoading(true);
     } catch (error: any) {
+      setLoading(false);
       showErrorWithTimeout(error.response.data.message, 3000);
       return;
     }
@@ -99,85 +106,91 @@ const SignIn = () => {
     <ThemeProvider theme={defaultTheme}>
       <Container component="main" maxWidth="xs">
         <CssBaseline />
-        <Paper
-          elevation={5}
-          sx={{
-            border: "1px",
-            marginTop: 4,
-            padding: "30px",
-            borderRadius: "10px",
-          }}
-        >
-          <Box
+        {!loading ? (
+          <Paper
+            elevation={5}
             sx={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
+              border: "1px",
+              marginTop: 4,
+              padding: "30px",
+              borderRadius: "10px",
             }}
           >
-            <Avatar sx={{ m: 1, bgcolor: "primary.main" }}>
-              <LockOutlinedIcon />
-            </Avatar>
-            <Typography component="h1" variant="h5">
-              Sign in
-            </Typography>
-            {error && (
-              <Typography marginTop={1} textAlign={"center"} color="error">
-                <b>Error:</b> {error}
-              </Typography>
-            )}
             <Box
-              component="form"
-              onSubmit={handleSubmit}
-              noValidate
-              sx={{ mt: 0 }}
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+              }}
             >
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                id="email"
-                label="Email Address"
-                name="email"
-                autoComplete="email"
-                autoFocus
-                value={user.email}
-                onChange={handleChange}
-              />
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                name="password"
-                label="Password"
-                type="password"
-                id="password"
-                autoComplete="current-password"
-                value={user.password}
-                onChange={handleChange}
-              />
-              {/* <FormControlLabel
+              <>
+                <Avatar sx={{ m: 1, bgcolor: "primary.main" }}>
+                  <LockOutlinedIcon />
+                </Avatar>
+                <Typography component="h1" variant="h5">
+                  Sign in
+                </Typography>
+                {error && (
+                  <Typography marginTop={1} textAlign={"center"} color="error">
+                    <b>Error:</b> {error}
+                  </Typography>
+                )}
+                <Box
+                  component="form"
+                  onSubmit={handleSubmit}
+                  noValidate
+                  sx={{ mt: 0 }}
+                >
+                  <TextField
+                    margin="normal"
+                    required
+                    fullWidth
+                    id="email"
+                    label="Email Address"
+                    name="email"
+                    autoComplete="email"
+                    autoFocus
+                    value={user.email}
+                    onChange={handleChange}
+                  />
+                  <TextField
+                    margin="normal"
+                    required
+                    fullWidth
+                    name="password"
+                    label="Password"
+                    type="password"
+                    id="password"
+                    autoComplete="current-password"
+                    value={user.password}
+                    onChange={handleChange}
+                  />
+                  {/* <FormControlLabel
               control={<Checkbox value="remember" color="primary" />}
               label="Remember me"
             /> */}
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                sx={{ mt: 3, mb: 2 }}
-              >
-                Sign In
-              </Button>
-              <Grid item xs textAlign={"center"} marginBottom={1}>
-                <Link to={"/forget-password"}>Forgot password?</Link>
-              </Grid>
-              <Grid item textAlign={"center"} marginBottom={1}>
-                <Link to={"/sign-up"}>Don't have an account? Sign Up</Link>
-              </Grid>
+                  <Button
+                    type="submit"
+                    fullWidth
+                    variant="contained"
+                    sx={{ mt: 3, mb: 2 }}
+                  >
+                    Sign In
+                  </Button>
+                  <Grid item xs textAlign={"center"} marginBottom={1}>
+                    <Link to={"/forget-password"}>Forgot password?</Link>
+                  </Grid>
+                  <Grid item textAlign={"center"} marginBottom={1}>
+                    <Link to={"/sign-up"}>Don't have an account? Sign Up</Link>
+                  </Grid>
+                </Box>
+              </>
             </Box>
-          </Box>
-          <Copyright sx={{ my: 2 }} />
-        </Paper>
+            <Copyright sx={{ my: 2 }} />
+          </Paper>
+        ) : (
+          <Loader height={height} width={width} />
+        )}
       </Container>
     </ThemeProvider>
   );

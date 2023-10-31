@@ -34,7 +34,7 @@ const Sidebar = (): JSX.Element => {
         const accessToken = localStorage.getItem("token");
         if (accessToken) {
           const res = await axios.get(
-            `${process.env.REACT_APP_API}/loggedAdmin`,
+            `${process.env.REACT_APP_API}/admin/loggedadmin`,
             {
               headers: { Authorization: `Bearer ${accessToken}` },
             }

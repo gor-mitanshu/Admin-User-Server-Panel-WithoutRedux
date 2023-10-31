@@ -14,7 +14,9 @@ const Dashboard = (): JSX.Element => {
   useEffect(() => {
     const getUsers = async () => {
       try {
-        const res = await axios.get(`${process.env.REACT_APP_API}/getUsers`);
+        const res = await axios.get(
+          `${process.env.REACT_APP_API}/user/getUsers`
+        );
         const users = res.data.data;
 
         const activeUsers = users.filter(
@@ -41,6 +43,7 @@ const Dashboard = (): JSX.Element => {
       <Grid container padding={2} spacing={1}>
         <Grid item lg={4} md={6} sm={12} xs={12}>
           <Card
+            elevation={4}
             sx={{
               background: "#29a744",
               color: "#fff",
@@ -72,6 +75,7 @@ const Dashboard = (): JSX.Element => {
 
         <Grid item lg={4} md={6} sm={12} xs={12}>
           <Card
+            elevation={4}
             sx={{
               background: "#dc3546",
               color: "#fff",
@@ -103,6 +107,7 @@ const Dashboard = (): JSX.Element => {
 
         <Grid item lg={4} md={12} sm={12} xs={12}>
           <Card
+            elevation={4}
             sx={{
               background: "#f8c12b",
               color: "#fff",

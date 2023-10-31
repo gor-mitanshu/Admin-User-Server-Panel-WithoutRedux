@@ -9,6 +9,8 @@ const Navbar = ({ toogleSidebar }: any): JSX.Element => {
     setOpen(!isOpen);
     toogleSidebar(isOpen);
   };
+  // const token: any = localStorage.getItem("token");
+  // console.log(token);
 
   return (
     <div>

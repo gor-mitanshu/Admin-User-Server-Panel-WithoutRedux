@@ -61,7 +61,7 @@ const ComposeEmailModal: React.FC<ComposeEmailModalProps> = ({
         body: body,
       };
       const res = await axios.post(
-        `${process.env.REACT_APP_API}/send-email`,
+        `${process.env.REACT_APP_API}/admin/sendemail`,
         send
       );
       if (!!res) {

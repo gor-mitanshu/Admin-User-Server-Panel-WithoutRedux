@@ -9,8 +9,8 @@ const Admin = new mongoose.Schema({
      password: { type: String, required: true },
      role: { type: String },
      otp: { type: String, },
-     otpExpiry: { Date }
+     otpExpiry: { type: Date }
 }, { timestamps: true });
 
-const UserModel = mongoose.model('admin', Admin);
-module.exports = UserModel;
+const AdminModel = mongoose.model('admin', Admin);
+module.exports = AdminModel;

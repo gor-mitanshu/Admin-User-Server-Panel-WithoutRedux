@@ -43,7 +43,7 @@ const UpdateUser = () => {
   useEffect(() => {
     const getUser = async () => {
       axios
-        .get(`${process.env.REACT_APP_API}/getUser/${id}`)
+        .get(`${process.env.REACT_APP_API}/user/getUser/${id}`)
         .then((response) => {
           const userData = response.data.data;
           setEditedUser(userData);
@@ -113,6 +113,7 @@ const UpdateUser = () => {
       formData.append("email", editedUser.email);
       formData.append("phone", editedUser.phone);
       formData.append("status", editedUser.status);
+      debugger;
       if (imageChanged && editedUser.picture instanceof File) {
         formData.append("picture", editedUser.picture);
       } else {
@@ -120,7 +121,7 @@ const UpdateUser = () => {
       }
 
       const res = await axios.put(
-        `${process.env.REACT_APP_API}/updateUser/${id}`,
+        `${process.env.REACT_APP_API}/user/updateUser/${id}`,
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },

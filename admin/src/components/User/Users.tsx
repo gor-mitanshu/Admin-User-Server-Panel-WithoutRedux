@@ -32,7 +32,7 @@ const Users = () => {
 
   const getUsers = async () => {
     try {
-      const res = await axios.get(`${process.env.REACT_APP_API}/getUsers`);
+      const res = await axios.get(`${process.env.REACT_APP_API}/user/getUsers`);
       if (!!res) {
         setLoading(false);
         setUsers(res.data.data);
@@ -49,7 +49,7 @@ const Users = () => {
   const onUserDelete = async (id: string) => {
     try {
       const res = await axios.delete(
-        `${process.env.REACT_APP_API}/deleteuser/${id}`
+        `${process.env.REACT_APP_API}/user/deleteUser/${id}`
       );
       if (res && res.data.success) {
         getUsers();
@@ -58,6 +58,7 @@ const Users = () => {
         toast.error(res.data.message);
       }
     } catch (error: any) {
+      console.log(error);
       toast.error(error.response.data.message);
     }
   };

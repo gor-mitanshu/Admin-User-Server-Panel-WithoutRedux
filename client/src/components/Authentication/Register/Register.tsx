@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import {
@@ -9,12 +9,15 @@ import {
   Typography,
   Container,
   Paper,
+  IconButton,
 } from "@mui/material";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { Delete } from "@mui/icons-material";
+import Loader from "../../Loader/Loader";
 
 interface IUser {
   firstname: string;
@@ -45,7 +48,7 @@ const Copyright = (props: any) => {
 
 const defaultTheme = createTheme();
 
-const SignUp = () => {
+const SignUp = ({ height, width }: any) => {
   const navigate = useNavigate();
   const [error, setError] = useState<string | null>(null);
   const [user, setUser] = useState<IUser>({
@@ -57,6 +60,18 @@ const SignUp = () => {
     cpassword: "",
     picture: "",
   });
+  const [loading, setLoading] = useState<boolean>(false);
+  const [selectedImage, setSelectedImage] = useState<
+    string | ArrayBuffer | null
+  >(null);
+  const inputRef = useRef<any>(null);
+
+  const removeImage = () => {
+    setSelectedImage(null);
+    if (inputRef.current) {
+      inputRef.current.value = "";
+    }
+  };
 
   const showErrorWithTimeout = (errorMessage: string, timeout: number) => {
     setError(errorMessage);
@@ -72,6 +87,7 @@ const SignUp = () => {
         ...prevUserDetails,
         picture: files[0],
       }));
+      setSelectedImage(URL.createObjectURL(files[0]));
     } else {
       setUser((prevUserDetails) => ({
         ...prevUserDetails,
@@ -109,6 +125,7 @@ const SignUp = () => {
       );
       return;
     }
+    setLoading(true);
     try {
       const formData = new FormData();
       formData.append("firstname", user.firstname);
@@ -119,17 +136,19 @@ const SignUp = () => {
       formData.append("picture", user.picture);
 
       const res = await axios.post(
-        `${process.env.REACT_APP_API}/signup`,
+        `${process.env.REACT_APP_API}/user/signup`,
         formData,
         { headers: { "Content-Type": "multipart/form-data" } }
       );
       if (!!res) {
+        setLoading(false);
         navigate("/sign-in");
         toast.success(res.data.message);
       } else {
         showErrorWithTimeout("Unable to Register", 3000);
       }
     } catch (error: any) {
+      setLoading(false);
       showErrorWithTimeout(error.response.data.message, 3000);
     }
   };
@@ -138,141 +157,168 @@ const SignUp = () => {
     <ThemeProvider theme={defaultTheme}>
       <Container component="main" maxWidth="sm">
         <CssBaseline />
-        <Paper
-          elevation={5}
-          sx={{
-            border: "1px",
-            marginTop: 4,
-            padding: "30px",
-            borderRadius: "10px",
-          }}
-        >
-          <Box
+        {!loading ? (
+          <Paper
+            elevation={5}
             sx={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
+              border: "1px",
+              marginTop: 4,
+              padding: "30px",
+              borderRadius: "10px",
             }}
           >
-            <Avatar sx={{ m: 1, bgcolor: "primary.main" }}>
-              <LockOutlinedIcon />
-            </Avatar>
-            <Typography component="h1" variant="h5">
-              Sign up
-            </Typography>
             <Box
-              component="form"
-              noValidate
-              onSubmit={handleSubmit}
-              sx={{ mt: 3 }}
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+              }}
             >
-              {error && (
-                <Typography marginY={1} textAlign={"center"} color="error">
-                  <b>Error:</b> {error}
-                </Typography>
-              )}
-              <Grid container spacing={2}>
-                <Grid item xs={12} sm={6}>
-                  <TextField
-                    autoComplete="given-name"
-                    name="firstname"
-                    fullWidth
-                    id="firstname"
-                    label="First Name"
-                    autoFocus
-                    value={user.firstname}
-                    onChange={handleChange}
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <TextField
-                    autoComplete="family-name"
-                    name="lastname"
-                    fullWidth
-                    id="lastname"
-                    label="Last Name"
-                    value={user.lastname}
-                    onChange={handleChange}
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <TextField
-                    fullWidth
-                    id="email"
-                    label="Email Address"
-                    name="email"
-                    autoComplete="email"
-                    value={user.email}
-                    onChange={handleChange}
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <TextField
-                    fullWidth
-                    id="phone"
-                    label="Phone Number"
-                    name="phone"
-                    autoComplete="phone"
-                    value={user.phone}
-                    onChange={handleChange}
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <TextField
-                    fullWidth
-                    name="password"
-                    label="Password"
-                    type="password"
-                    id="password"
-                    autoComplete="new-password"
-                    value={user.password}
-                    onChange={handleChange}
-                  />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <TextField
-                    fullWidth
-                    name="cpassword"
-                    label="Confirm Password"
-                    type="password"
-                    id="cpassword"
-                    autoComplete="confirm-password"
-                    value={user.cpassword}
-                    onChange={handleChange}
-                  />
-                </Grid>
-                <Grid item xs={12}>
-                  <TextField
-                    fullWidth
-                    name="picture"
-                    type="file"
-                    id="picture"
-                    autoComplete="picture"
-                    inputProps={{
-                      multiple: false,
-                    }}
-                    onChange={(e) => handleChange(e, "picture")}
-                  />
-                </Grid>
-              </Grid>
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                sx={{ mt: 3, mb: 2 }}
-                onClick={() => handleSubmit}
+              <Avatar sx={{ m: 1, bgcolor: "primary.main" }}>
+                <LockOutlinedIcon />
+              </Avatar>
+              <Typography component="h1" variant="h5">
+                Sign up
+              </Typography>
+              <Box
+                component="form"
+                noValidate
+                onSubmit={handleSubmit}
+                sx={{ mt: 3 }}
               >
-                Sign Up
-              </Button>
-              <Grid container justifyContent="center">
-                <Grid item>
-                  <Link to="/sign-in">Already have an account? Sign in</Link>
+                {error && (
+                  <Typography marginY={1} textAlign={"center"} color="error">
+                    <b>Error:</b> {error}
+                  </Typography>
+                )}
+                <Grid container spacing={2}>
+                  <Grid item xs={12} sm={6}>
+                    <TextField
+                      autoComplete="given-name"
+                      name="firstname"
+                      fullWidth
+                      id="firstname"
+                      label="First Name"
+                      autoFocus
+                      value={user.firstname}
+                      onChange={handleChange}
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <TextField
+                      autoComplete="family-name"
+                      name="lastname"
+                      fullWidth
+                      id="lastname"
+                      label="Last Name"
+                      value={user.lastname}
+                      onChange={handleChange}
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <TextField
+                      fullWidth
+                      id="email"
+                      label="Email Address"
+                      name="email"
+                      autoComplete="email"
+                      value={user.email}
+                      onChange={handleChange}
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <TextField
+                      fullWidth
+                      id="phone"
+                      label="Phone Number"
+                      name="phone"
+                      autoComplete="phone"
+                      value={user.phone}
+                      onChange={handleChange}
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <TextField
+                      fullWidth
+                      name="password"
+                      label="Password"
+                      type="password"
+                      id="password"
+                      autoComplete="new-password"
+                      value={user.password}
+                      onChange={handleChange}
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <TextField
+                      fullWidth
+                      name="cpassword"
+                      label="Confirm Password"
+                      type="password"
+                      id="cpassword"
+                      autoComplete="confirm-password"
+                      value={user.cpassword}
+                      onChange={handleChange}
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    <TextField
+                      fullWidth
+                      name="picture"
+                      type="file"
+                      id="picture"
+                      autoComplete="picture"
+                      inputProps={{
+                        multiple: false,
+                      }}
+                      onChange={(e) => handleChange(e, "picture")}
+                      inputRef={inputRef}
+                    />
+                  </Grid>
+                  <Grid item xs={12}>
+                    {selectedImage && (
+                      <div style={{ display: "flex", alignItems: "center" }}>
+                        <img
+                          src={
+                            typeof selectedImage === "string"
+                              ? selectedImage
+                              : ""
+                          }
+                          alt="Selected "
+                          style={{
+                            maxWidth: "100%",
+                            maxHeight: "80px",
+                            // borderRadius: "50%",
+                          }}
+                        />
+                        <IconButton color="primary" onClick={removeImage}>
+                          <Delete />
+                        </IconButton>
+                      </div>
+                    )}
+                  </Grid>
                 </Grid>
-              </Grid>
+                <Button
+                  type="submit"
+                  fullWidth
+                  variant="contained"
+                  sx={{ mt: 3, mb: 2 }}
+                  onClick={() => handleSubmit}
+                >
+                  Sign Up
+                </Button>
+                <Grid container justifyContent="center">
+                  <Grid item>
+                    <Link to="/sign-in">Already have an account? Sign in</Link>
+                  </Grid>
+                </Grid>
+              </Box>
             </Box>
-          </Box>
-          <Copyright sx={{ mt: 5 }} />
-        </Paper>
+            <Copyright sx={{ mt: 5 }} />
+          </Paper>
+        ) : (
+          <Loader height={height} width={width} />
+        )}
       </Container>
     </ThemeProvider>
   );

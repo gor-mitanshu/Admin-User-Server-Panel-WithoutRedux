@@ -10,7 +10,7 @@ const User = new mongoose.Schema({
      status: { type: String, default: "active" },
      role: { type: String },
      otp: { type: String, },
-     otpExpiry: { Date },
+     otpExpiry: { type: Date },
 }, { timestamps: true });
 
 const UserModel = mongoose.model('user', User);

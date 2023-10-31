@@ -83,12 +83,12 @@ const SignIn = () => {
         password: user.password,
       };
       const res = await axios.post(
-        `${process.env.REACT_APP_API}/admin-signin`,
+        `${process.env.REACT_APP_API}/admin/signin`,
         body
       );
       if (!!res) {
         login(res.data);
-        localStorage.setItem("token", JSON.stringify(res.data));
+        localStorage.setItem("token", JSON.stringify(res.data.data));
         navigate(state?.path || "/", { replace: true });
         toast.success(res.data.message);
       }
