@@ -14,9 +14,7 @@ const Dashboard = (): JSX.Element => {
   useEffect(() => {
     const getUsers = async () => {
       try {
-        const res = await axios.get(
-          `${process.env.REACT_APP_API}/user/getUsers`
-        );
+        const res = await axios.get(`${process.env.REACT_APP_API}/getUsers`);
         const users = res.data.data;
 
         const activeUsers = users.filter(

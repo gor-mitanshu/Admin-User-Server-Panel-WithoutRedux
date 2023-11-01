@@ -39,7 +39,7 @@ const UpdateProfile = () => {
   useEffect(() => {
     const getUser = async () => {
       axios
-        .get(`${process.env.REACT_APP_API}/admin/getAdmin/${id}`)
+        .get(`${process.env.REACT_APP_API}/getAdmin/${id}`)
         .then((response) => {
           const userData = response.data.data;
           setEditedUser(userData);
@@ -104,7 +104,7 @@ const UpdateProfile = () => {
       }
 
       const res = await axios.put(
-        `${process.env.REACT_APP_API}/admin/updateAdmin/${id}`,
+        `${process.env.REACT_APP_API}/updateAdmin/${id}`,
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },

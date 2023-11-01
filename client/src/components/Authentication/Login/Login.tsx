@@ -83,10 +83,7 @@ const SignIn = ({ height, width }: any) => {
         email: user.email,
         password: user.password,
       };
-      const res = await axios.post(
-        `${process.env.REACT_APP_API}/user/signin`,
-        body
-      );
+      const res = await axios.post(`${process.env.REACT_APP_API}/signin`, body);
       if (!!res) {
         setLoading(false);
         login(res.data);

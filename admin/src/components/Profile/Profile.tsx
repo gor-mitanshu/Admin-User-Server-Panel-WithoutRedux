@@ -23,7 +23,7 @@ const Profile = () => {
         const accessToken = localStorage.getItem("token");
         if (accessToken) {
           const res = await axios.get(
-            `${process.env.REACT_APP_API}/admin/loggedadmin`,
+            `${process.env.REACT_APP_API}/loggedadmin`,
             {
               headers: { Authorization: `Bearer ${accessToken}` },
             }

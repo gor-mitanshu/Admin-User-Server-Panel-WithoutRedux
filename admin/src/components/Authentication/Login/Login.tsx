@@ -83,7 +83,7 @@ const SignIn = () => {
         password: user.password,
       };
       const res = await axios.post(
-        `${process.env.REACT_APP_API}/admin/signin`,
+        `${process.env.REACT_APP_API}/admin-signin`,
         body
       );
       if (!!res) {

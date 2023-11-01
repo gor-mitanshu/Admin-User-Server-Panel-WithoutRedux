@@ -66,7 +66,7 @@ const SidebarChangePassword = () => {
         password: user.password,
       };
       const res = await axios.put(
-        `${process.env.REACT_APP_API}/user/changepassword/${id}`,
+        `${process.env.REACT_APP_API}/changepassword/${id}`,
         body
       );
       if (!!res) {
