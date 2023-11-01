@@ -18,12 +18,14 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { Delete } from "@mui/icons-material";
 import Loader from "../../Loader/Loader";
+import MuiPhoneNumber from "material-ui-phone-number";
 
 interface IUser {
   firstname: string;
   lastname: string;
   email: string;
   phone: string;
+  // phonenumber: string;
   password: string;
   cpassword: string;
   picture: string;
@@ -56,6 +58,7 @@ const SignUp = ({ height, width }: any) => {
     lastname: "",
     email: "",
     phone: "",
+    // phonenumber: "",
     password: "",
     cpassword: "",
     picture: "",
@@ -114,6 +117,10 @@ const SignUp = ({ height, width }: any) => {
       showErrorWithTimeout("Please Enter Your Phone", 3000);
       return;
     }
+    // if (!user.phonenumber) {
+    //   showErrorWithTimeout("Please Enter Your Phone", 3000);
+    //   return;
+    // }
     if (!user.password) {
       showErrorWithTimeout("Please Enter Your Password", 3000);
       return;
@@ -132,6 +139,7 @@ const SignUp = ({ height, width }: any) => {
       formData.append("lastname", user.lastname);
       formData.append("email", user.email);
       formData.append("phone", user.phone);
+      // formData.append("phonenumber", user.phonenumber);
       formData.append("password", user.password);
       formData.append("picture", user.picture);
 
@@ -230,16 +238,28 @@ const SignUp = ({ height, width }: any) => {
                     />
                   </Grid>
                   <Grid item xs={12}>
-                    <TextField
-                      fullWidth
-                      id="phone"
-                      label="Phone Number"
+                    <MuiPhoneNumber
+                      defaultCountry={"in"}
+                      variant="outlined"
                       name="phone"
-                      autoComplete="phone"
                       value={user.phone}
-                      onChange={handleChange}
+                      onChange={(value) =>
+                        handleChange({ target: { name: "phone", value } })
+                      }
+                      style={{ width: "100%" }}
                     />
                   </Grid>
+                  {/* <Grid item xs={12}>
+                    <TextField
+                      fullWidth
+                      id="phonenumber"
+                      label="Phone Number"
+                      name="phonenumber"
+                      autoComplete="phonenumber"
+                      value={user.phonenumber}
+                      onChange={handleChange}
+                    />
+                  </Grid> */}
                   <Grid item xs={12} sm={6}>
                     <TextField
                       fullWidth
