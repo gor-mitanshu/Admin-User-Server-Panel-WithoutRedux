@@ -11,6 +11,7 @@ import Profile from "./components/Profile/Profile";
 import UpdateProfile from "./components/Profile/UpdateProfile";
 import SideChangePassword from "./components/SidebarChangePassword/SideChangePassword";
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
+import UserVerification from "./components/Authentication/UserVerification/UserVerification";
 
 function App() {
   const ProtectedRoutes = ProtectedRoute();
@@ -22,6 +23,10 @@ function App() {
           element={<SignIn height={"100vh"} width={"100%"} />}
         />
         <Route
+          path="/verify/:verificationToken"
+          element={<UserVerification />}
+        />
+        <Route
           path={"/sign-up"}
           element={<SignUp height={"100vh"} width={"100%"} />}
         />
@@ -30,6 +35,7 @@ function App() {
           path={"/reset-password/:id/:token"}
           element={<ResetPassword />}
         />
+
         <Route
           path="/"
           element={

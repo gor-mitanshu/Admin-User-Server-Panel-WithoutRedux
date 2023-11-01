@@ -1,14 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router";
 import axios from "axios";
-import {
-  Avatar,
-  Typography,
-  Button,
-  Grid,
-  TextField,
-  Paper,
-} from "@mui/material";
+import { Avatar, Typography, Button, Grid, TextField } from "@mui/material";
 import { toast } from "react-toastify";
 
 interface IUser {
@@ -44,6 +37,9 @@ const UpdateProfile = () => {
           const userData = response.data.data;
           setEditedUser(userData);
           setInitialPicture(userData.picture);
+        })
+        .catch((error: any) => {
+          console.log(error);
         });
     };
     getUser();
@@ -124,30 +120,26 @@ const UpdateProfile = () => {
   };
 
   return (
-    <Grid container padding={2} display={"flex"} flexDirection={"column"}>
-      <Typography className="font" color="black" variant="h3" paddingBottom={3}>
-        Update Users Details
+    <>
+      <Typography
+        textAlign={"center"}
+        className="font"
+        color="black"
+        variant="h3"
+        paddingBottom={3}
+      >
+        Update Profile
       </Typography>
       <Grid
-        item
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          flexWrap: "wrap",
-        }}
-        xs={12}
-        lg={6}
+        container
+        display={"flex"}
+        justifyContent={"center"}
+        alignItems={"center"}
+        flexWrap={"wrap"}
       >
-        <Paper
-          elevation={3}
-          style={{
-            padding: "20px 20px",
-            width: "100%",
-          }}
-        >
-          {editedUser ? (
-            <>
+        {editedUser ? (
+          <>
+            <Grid item xs={11} sm={10} lg={6}>
               <Avatar
                 src={
                   editedUser.picture
@@ -228,34 +220,36 @@ const UpdateProfile = () => {
                   />
                 </Grid>
               </Grid>
-              <Button
-                variant="contained"
-                color="error"
-                size="large"
-                style={{ marginTop: "20px", marginRight: "5px" }}
-                onClick={() => navigate("/profile")}
-              >
-                Cancel
-              </Button>
-              <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                size="large"
-                style={{ marginTop: "20px" }}
-                onClick={(e: any) => handleSubmit(e)}
-              >
-                Save
-              </Button>
-            </>
-          ) : (
-            <Typography variant="h5" color="error">
-              No Data Found
-            </Typography>
-          )}
-        </Paper>
+              <div style={{ justifyContent: "center", display: "flex" }}>
+                <Button
+                  variant="contained"
+                  color="error"
+                  size="large"
+                  style={{ marginTop: "20px", marginRight: "5px" }}
+                  onClick={() => navigate("/profile")}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                  size="large"
+                  style={{ marginTop: "20px" }}
+                  onClick={(e: any) => handleSubmit(e)}
+                >
+                  Save
+                </Button>
+              </div>
+            </Grid>
+          </>
+        ) : (
+          <Typography variant="h5" color="error">
+            No Data Found
+          </Typography>
+        )}
       </Grid>
-    </Grid>
+    </>
   );
 };
 

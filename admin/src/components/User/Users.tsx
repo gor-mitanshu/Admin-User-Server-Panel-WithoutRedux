@@ -25,6 +25,12 @@ function getRandomColor() {
   return `rgba(${red}, ${green}, ${blue}, ${opacity})`;
 }
 
+function getInitials(name: any) {
+  const nameParts = name.split(" ");
+  const initials = nameParts.map((part: any) => part.charAt(0).toUpperCase());
+  return initials.join("");
+}
+
 const Users = () => {
   const navigate = useNavigate();
   const [users, setUsers] = useState<IUsers | any>([]);
@@ -62,7 +68,6 @@ const Users = () => {
       toast.error(error.response.data.message);
     }
   };
-
   const rows = users.map((user: any, key: any) => ({
     id: key + 1,
     userId: user._id,
@@ -78,12 +83,13 @@ const Users = () => {
             ? `${process.env.REACT_APP_API}/${user.picture}`
             : undefined
         }
-        alt={user.firstname
-          .concat(".", user.lastname)
-          .split(" ")
-          .map((n: any) => n[0])
-          .join("")
-          .toUpperCase()}
+        // alt={user.firstname
+        //   .concat(".", user.lastname)
+        //   .split(" ")
+        //   .map((initialLetter: any) => initialLetter[0])
+        //   .join("")
+        //   .toUpperCase()}
+        alt={getInitials(user.firstname)}
         // sx={{ height: "100%", width: "100%" }}
         style={{ backgroundColor: getRandomColor() }}
       />

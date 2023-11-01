@@ -6,7 +6,6 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
 import TextField from "@mui/material/TextField";
-import Paper from "@mui/material/Paper";
 import { toast } from "react-toastify";
 import Loader from "../Loader/Loader";
 import { MenuItem } from "@mui/material";
@@ -113,7 +112,7 @@ const UpdateUser = () => {
       formData.append("email", editedUser.email);
       formData.append("phone", editedUser.phone);
       formData.append("status", editedUser.status);
-      debugger;
+
       if (imageChanged && editedUser.picture instanceof File) {
         formData.append("picture", editedUser.picture);
       } else {
@@ -141,30 +140,26 @@ const UpdateUser = () => {
   };
 
   return (
-    <Grid container padding={2} display={"flex"} flexDirection={"column"}>
-      <Typography className="font" color="black" variant="h3" paddingBottom={3}>
-        Update Users Details
+    <>
+      <Typography
+        textAlign={"center"}
+        className="font"
+        color="black"
+        variant="h3"
+        paddingBottom={3}
+      >
+        Update User
       </Typography>
       <Grid
-        item
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          flexWrap: "wrap",
-        }}
-        xs={12}
-        lg={6}
+        container
+        display={"flex"}
+        justifyContent={"center"}
+        alignItems={"center"}
+        flexWrap={"wrap"}
       >
-        <Paper
-          elevation={3}
-          style={{
-            padding: "20px 20px",
-            width: "100%",
-          }}
-        >
-          {editedUser ? (
-            <>
+        {editedUser ? (
+          <>
+            <Grid item xs={11} sm={10} lg={6}>
               <Avatar
                 src={
                   editedUser.picture instanceof File
@@ -274,13 +269,13 @@ const UpdateUser = () => {
               >
                 Update
               </Button>
-            </>
-          ) : (
-            <Loader />
-          )}
-        </Paper>
+            </Grid>
+          </>
+        ) : (
+          <Loader />
+        )}
       </Grid>
-    </Grid>
+    </>
   );
 };
 

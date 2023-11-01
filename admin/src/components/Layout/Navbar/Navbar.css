@@ -9,7 +9,7 @@
 .toolbar-navbar {
   padding: 0;
   padding-left: 12px !important;
-  background-image: url(https://cdn.pixabay.com/photo/2017/03/11/20/51/bubbles-2135831_1280.jpg);
+  /* background-image: url(https://cdn.pixabay.com/photo/2017/03/11/20/51/bubbles-2135831_1280.jpg); */
   position: relative;
   color: #fff;
 }
@@ -30,6 +30,12 @@
   font-weight: 900 !important;
   font-size: 26px !important;
   z-index: 1;
+}
+.ellipsis {
+  max-width: 140px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .navbar-name {
   margin: 4px !important;

@@ -121,7 +121,12 @@ app.post('/admin-signup', upload.single('picture'), async (req, res) => {
                if (error) {
                     console.error('Error sending email:', error);
                } else {
-                    console.log('Email sent:', info.response);
+                    // console.log('Email sent:', info.response);
+                    return res.status(200).send({
+                         success: true,
+                         message: 'Email sent successfully',
+                         technicalMessage: 'Email sent: ' + info.response
+                    });
                }
           });
 
@@ -743,7 +748,7 @@ app.post('/signup', upload.single('picture'), async (req, res) => {
           if (!password) {
                return res.status(500).send({ message: "Please Enter the Password", success: false });
           }
-          if (!req.body) {
+          if (!firstname | !lastname | !email | !phone | !password) {
                return res.status(500).send({ message: "Please Enter all the fields", success: false });
           }
           const preregistedUser = await User.findOne({ email: email });
@@ -754,8 +759,10 @@ app.post('/signup', upload.single('picture'), async (req, res) => {
                     data: null,
                });
           }
+          const expireIn = "10h";
           const hashedPassword = await bcrypt.hash(password, 10);
-          const verificationToken = crypto.randomBytes(20).toString('hex');
+          const verificationToken = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: expireIn });
+
           let picture = '';
           if (req.file) {
                picture = `images/${req.file.filename}`;
@@ -774,7 +781,7 @@ app.post('/signup', upload.single('picture'), async (req, res) => {
           });
           await newAdmin.save();
 
-          const verificationLink = `${yourVerificationLinkBaseUrl}/${verificationToken}`
+          const verificationLink = `${process.env.REACT_URL_USER}/verify/${verificationToken}`
 
           var transporter = nodemailer.createTransport({
                host: 'smtp.gmail.com',
@@ -828,12 +835,12 @@ app.get('/verify/:verificationToken', async (req, res) => {
                return res.status(404).send({ message: 'Invalid verification token', success: false });
           }
 
-          if (user.verified) {
+          if (user.isVerified) {
                return res.status(200).send({ message: 'Email already verified', success: true });
           }
 
           // Mark the user as verified
-          user.verified = true;
+          user.isVerified = true;
           user.verificationToken = undefined;
           await user.save();
 
@@ -860,7 +867,7 @@ app.post('/signin', async (req, res) => {
                     success: false,
                });
           }
-          if (!user.verified) {
+          if (!user.isVerified) {
                return res.status(401).send({
                     message: "Email not verified. Please verify your email to log in.",
                     success: false,
@@ -876,12 +883,13 @@ app.post('/signin', async (req, res) => {
           }
           const expireIn = "10h";
           const token = jwt.sign({ user },
-               'token',
+               process.env.JWT_SECRET,
                { expiresIn: expireIn });
           return res.status(200).send({
                message: "Logged In Successfully!!!",
                success: true,
-               data: token
+               data: token,
+               isVerified: user.isVerified
           })
      } catch (error) {
           return res.status(400).send({

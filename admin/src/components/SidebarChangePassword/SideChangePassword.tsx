@@ -3,7 +3,6 @@ import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import {
   Paper,
-  CssBaseline,
   TextField,
   Box,
   Typography,
@@ -86,7 +85,6 @@ const SidebarChangePassword = () => {
   return (
     <ThemeProvider theme={defaultTheme}>
       <Container component="main" maxWidth="xs">
-        <CssBaseline />
         <Paper
           elevation={5}
           sx={{

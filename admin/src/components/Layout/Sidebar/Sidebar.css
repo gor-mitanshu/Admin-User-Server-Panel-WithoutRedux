@@ -1,14 +1,15 @@
 .sidebar {
   height: 100%;
   /* background: #fff !important; */
-  background-image: url(https://img.freepik.com/premium-vector/white-abstract-background-with-white-color-bubble-pattern-suitable-website-design-banner_626143-326.jpg);
+  /* background-image: url(https://img.freepik.com/premium-vector/white-abstract-background-with-white-color-bubble-pattern-suitable-website-design-banner_626143-326.jpg); */
   color: black !important;
   position: relative !important;
   overflow-x: hidden !important;
   overflow-y: auto !important;
   color: black !important;
-  border-right: 1px solid black !important;
-  border-bottom: 1px solid black !important;
+  border-right: 1px solid rgba(0, 0, 0, 0.3) !important;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.3) !important;
+  box-shadow: -3px 0 5px 0 black !important;
 }
 .sidebar-icon {
   color: black;

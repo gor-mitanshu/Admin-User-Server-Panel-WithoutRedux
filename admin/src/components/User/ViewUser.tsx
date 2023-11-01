@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Button, Paper, Typography, Avatar, Grid } from "@mui/material";
+import { Button, Typography, Avatar, Grid } from "@mui/material";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router";
 import { Link } from "react-router-dom";
@@ -72,161 +72,143 @@ const ViewUser = () => {
     setComposeModalOpen(false);
   };
 
-  console.log(user);
   return (
     <>
-      <Grid container padding={2} display={"flex"} flexDirection={"column"}>
-        <Typography
-          className="font"
-          color="black"
-          variant="h3"
-          paddingBottom={3}
-        >
-          Users Details
-        </Typography>
-        <Grid
-          item
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            flexWrap: "wrap",
-          }}
-          xs={12}
-          lg={6}
-        >
-          {user ? (
-            <Paper
-              elevation={3}
+      <Typography className="font" color="black" variant="h3" paddingBottom={3}>
+        User Details
+      </Typography>
+      <Grid
+        container
+        display={"flex"}
+        justifyContent={"center"}
+        alignItems={"center"}
+        flexWrap={"wrap"}
+      >
+        {user ? (
+          <Grid item xs={11} sm={10} lg={6}>
+            <div
               style={{
-                padding: "20px 0",
-                width: "100%",
-                background: "rgb(0 0 0 / 10%)",
-                // color: "white",
+                display: "flex",
+                justifyContent: "space-between",
+                flexWrap: "wrap",
+                marginBottom: "10px",
+              }}
+            >
+              <ArrowBack
+                fontSize="large"
+                onClick={() => navigate(`/users`)}
+                style={{ cursor: "pointer" }}
+              />
+              <Button
+                variant="contained"
+                color="error"
+                onClick={openComposeModal}
+              >
+                Compose
+              </Button>
+            </div>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-evenly",
+                alignItems: "center",
+                flexWrap: "wrap",
+                paddingTop: "40px",
+                paddingBottom: "40px",
+                borderRadius: "6px",
+                background:
+                  user.status === "active"
+                    ? "rgba(0, 128, 0, 0.2)"
+                    : "rgba(255, 0, 0, 0.2)",
               }}
             >
               <div
                 style={{
                   display: "flex",
-                  justifyContent: "space-between",
-                  flexWrap: "wrap",
-                  paddingBottom: "20px",
-                }}
-              >
-                <ArrowBack
-                  fontSize="large"
-                  onClick={() => navigate(`/users`)}
-                  style={{ cursor: "pointer" }}
-                />
-                <Paper elevation={8} sx={{ marginRight: "10px" }}>
-                  <Button
-                    variant="contained"
-                    color="error"
-                    onClick={openComposeModal}
-                  >
-                    Compose
-                  </Button>
-                </Paper>
-              </div>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-evenly",
+                  flexDirection: "column",
                   alignItems: "center",
-                  flexWrap: "wrap",
+                  justifyContent: "center",
+                  marginBottom: "10px",
                 }}
               >
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    justifyContent: "center",
+                <Avatar
+                  src={
+                    user?.picture
+                      ? `${process.env.REACT_APP_API}/${user?.picture}`
+                      : ""
+                  }
+                  alt={user.firstname
+                    .concat(".", user.lastname)
+                    .split(" ")
+                    .map((n: any) => n[0])
+                    .join("")
+                    .toUpperCase()}
+                  sx={{
+                    width: "150px",
+                    height: "150px",
                     marginBottom: "10px",
+                    // border: "1px solid black",
                   }}
-                >
-                  <Avatar
-                    src={
-                      user?.picture
-                        ? `${process.env.REACT_APP_API}/${user?.picture}`
-                        : ""
-                    }
-                    alt={user.firstname
-                      .concat(".", user.lastname)
-                      .split(" ")
-                      .map((n: any) => n[0])
-                      .join("")
-                      .toUpperCase()}
-                    sx={{
-                      width: "150px",
-                      height: "150px",
-                      marginBottom: "10px",
-                      border: "1px solid black",
-                    }}
-                    // style={{ backgroundColor: getRandomColor() }}
-                  />
-                  {user.picture !== "" && (
-                    <Link
-                      to={`${process.env.REACT_APP_API}/${user?.picture}`}
-                      target="_blank"
+                  // style={{ backgroundColor: getRandomColor() }}
+                />
+                {user.picture !== "" && (
+                  <Link
+                    to={`${process.env.REACT_APP_API}/${user?.picture}`}
+                    target="_blank"
+                  >
+                    <Button
+                      type="button"
+                      // color="info"
+                      sx={{ color: "black", borderColor: "black" }}
+                      size="large"
+                      variant="outlined"
                     >
-                      <Button
-                        type="button"
-                        // color="info"
-                        sx={{ color: "black", borderColor: "black" }}
-                        size="large"
-                        variant="outlined"
-                      >
-                        View Image
-                      </Button>
-                    </Link>
-                  )}
-                </div>
-                <div>
-                  <Typography variant="h4" marginBottom={2}>
-                    {user?.firstname} {user?.lastname}
-                  </Typography>
-                  <Typography variant="body1" marginBottom={2}>
-                    <b>Email:</b> {user?.email}
-                  </Typography>
-                  <Typography variant="body1" marginBottom={2}>
-                    <b>Phone:</b> {user?.phone}
-                  </Typography>
-                  <Typography variant="body1" marginBottom={2}>
-                    <b>Status:</b>{" "}
-                    <span
-                      style={{
-                        // backgroundColor:
-                        //   user?.status === "active"
-                        //     ? "rgba(0, 128, 0, 0.4)"
-                        //     : user?.status === "inactive"
-                        //     ? "rgba(255, 0, 0, 0.4)"
-                        //     : "inherit",
-                        color:
-                          user?.status === "active"
-                            ? "rgb(43,182,115)"
-                            : user?.status === "inactive"
-                            ? "rgb(255,0,0)"
-                            : "inherit",
-                        fontWeight:
-                          user?.status === "active" ||
-                          user?.status === "inactive"
-                            ? 700
-                            : "inherit",
-                      }}
-                    >
-                      {user?.status.toUpperCase()}
-                    </span>
-                  </Typography>
-                </div>
+                      View Image
+                    </Button>
+                  </Link>
+                )}
               </div>
-            </Paper>
-          ) : (
-            <div style={{ width: "100%" }}>
-              <Loader />
+              <div>
+                <Typography variant="h4" marginBottom={2}>
+                  {user?.firstname} {user?.lastname}
+                </Typography>
+                <Typography variant="body1" marginBottom={2}>
+                  <b>Email:</b> {user?.email}
+                </Typography>
+                <Typography variant="body1" marginBottom={2}>
+                  <b>Phone:</b> {user?.phone}
+                </Typography>
+                <Typography variant="body1" marginBottom={2}>
+                  <b>Status:</b>{" "}
+                  <span
+                    style={{
+                      // backgroundColor:
+                      //   user?.status === "active"
+                      //     ? "rgba(0, 128, 0, 0.4)"
+                      //     : user?.status === "inactive"
+                      //     ? "rgba(255, 0, 0, 0.4)"
+                      //     : "inherit",
+                      color:
+                        user?.status === "active"
+                          ? "rgb(43,182,115)"
+                          : user?.status === "inactive"
+                          ? "rgb(255,0,0)"
+                          : "inherit",
+                      fontWeight:
+                        user?.status === "active" || user?.status === "inactive"
+                          ? 700
+                          : "inherit",
+                    }}
+                  >
+                    {user?.status.toUpperCase()}
+                  </span>
+                </Typography>
+              </div>
             </div>
-          )}
-        </Grid>
+          </Grid>
+        ) : (
+          <Loader />
+        )}
       </Grid>
 
       {/* Compose Email Modal */}

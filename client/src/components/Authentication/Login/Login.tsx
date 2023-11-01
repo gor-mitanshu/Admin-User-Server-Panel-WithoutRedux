@@ -22,7 +22,6 @@ interface IUser {
   email: string;
   password: string;
 }
-
 const Copyright = (props: any) => {
   return (
     <Typography
@@ -78,6 +77,7 @@ const SignIn = ({ height, width }: any) => {
       showErrorWithTimeout("Please Enter Your Password", 3000);
       return;
     }
+
     try {
       const body = {
         email: user.email,
@@ -86,10 +86,18 @@ const SignIn = ({ height, width }: any) => {
       const res = await axios.post(`${process.env.REACT_APP_API}/signin`, body);
       if (!!res) {
         setLoading(false);
-        login(res.data);
-        localStorage.setItem("token", JSON.stringify(res.data));
-        navigate(state?.path || "/", { replace: true });
-        toast.success(res.data.message);
+        if (!res.data.isVerified) {
+          // toast.warn("Email not verified. Please verify your email to log in.");
+          showErrorWithTimeout(
+            "Email not verified. Please verify your email to log in.",
+            3000
+          );
+        } else {
+          login(res.data);
+          // localStorage.setItem("token", JSON.stringify(res.data));
+          navigate(state?.path || "/", { replace: true });
+          toast.success(res.data.message);
+        }
       }
       setLoading(true);
     } catch (error: any) {
@@ -162,10 +170,6 @@ const SignIn = ({ height, width }: any) => {
                     value={user.password}
                     onChange={handleChange}
                   />
-                  {/* <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
-              label="Remember me"
-            /> */}
                   <Button
                     type="submit"
                     fullWidth

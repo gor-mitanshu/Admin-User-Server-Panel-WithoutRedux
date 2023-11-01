@@ -144,6 +144,9 @@ const SignUp = ({ height, width }: any) => {
         setLoading(false);
         navigate("/sign-in");
         toast.success(res.data.message);
+        setTimeout(() => {
+          toast.warn("Check your email for a verification link.");
+        }, 1000);
       } else {
         showErrorWithTimeout("Unable to Register", 3000);
       }
