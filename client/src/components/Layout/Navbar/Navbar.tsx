@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { AppBar, Grid, Toolbar, Typography } from "@mui/material";
+import { AppBar, Toolbar, Typography } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import "./Navbar.css";
 import axios from "axios";
@@ -13,7 +13,6 @@ const Navbar = ({ toogleSidebar }: any): JSX.Element => {
 
   const [user, setUser] = useState<string>("");
 
-  // Fetch user data when the Navbar component is mounted.
   useEffect(() => {
     const getUserData = async () => {
       try {
@@ -38,26 +37,25 @@ const Navbar = ({ toogleSidebar }: any): JSX.Element => {
   }, []);
   return (
     <div>
-      <Grid className="navbar">
-        <AppBar className="appbar">
-          <Toolbar className="toolbar-navbar">
-            <MenuIcon className="menu-icon" onClick={toogleSiderbar} />
-            {/* <Grid className="navbar-name-content-center">
+      <AppBar className="appbar">
+        <Toolbar className="toolbar-navbar">
+          <MenuIcon className="menu-icon" onClick={toogleSiderbar} />
+          {/* <Grid className="navbar-name-content-center">
               <Typography className="navbar-title">Panel</Typography>
             </Grid> */}
-            <div
-              style={{
-                width: "100%",
-                display: "flex",
-                justifyContent: "flex-end",
-                alignItems: "center",
-              }}
-            >
-              <Typography className="navbar-title ellipsis">{user}</Typography>
-            </div>
-          </Toolbar>
-        </AppBar>
-      </Grid>
+          <div
+            className="justify-end justify-center"
+            style={{
+              width: "100%",
+              display: "flex",
+              justifyContent: "flex-end",
+              alignItems: "center",
+            }}
+          >
+            <Typography className="navbar-title ellipsis">{user}</Typography>
+          </div>
+        </Toolbar>
+      </AppBar>
     </div>
   );
 };
