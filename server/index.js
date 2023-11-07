@@ -925,7 +925,7 @@ app.post('/signup', upload.single('picture'), async (req, res) => {
       <div class="content">
         <h1 class="text-center">Email Verification</h1>
         <p>
-          <b class="success"> Hii ${newAdmin.firstname}, </b>
+          <b class="success"> Hii ${newAdmin.firstname + " " + newAdmin.lastname} , </b>
         </p>
         <p>
           Thank you for signing up! You are almost set to start enjoying the

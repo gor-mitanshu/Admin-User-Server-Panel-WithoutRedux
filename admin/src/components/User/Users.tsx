@@ -81,7 +81,7 @@ const Users = () => {
         src={
           user.picture
             ? `${process.env.REACT_APP_API}/${user.picture}`
-            : undefined
+            : getInitials(user.firstname)
         }
         // alt={user.firstname
         //   .concat(".", user.lastname)
