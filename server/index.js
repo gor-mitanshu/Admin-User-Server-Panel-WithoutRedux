@@ -798,8 +798,234 @@ app.post('/signup', upload.single('picture'), async (req, res) => {
                from: process.env.EMAIL_URL,
                to: email,
                subject: 'Registration Successful.',
-               text: `Thank you for Registering! Please verify your email by clicking on the following link: ${verificationLink}`,
+               // text: `Thank you for Registering! Please verify your email by clicking on the following link: ${verificationLink}`,
+               html: `
+             <!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Email Verification</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+      type="text/css"
+    />
+    <script
+      src="https://kit.fontawesome.com/363da174db.js"
+      crossorigin="anonymous"
+    ></script>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f5f5f5;
+      }
+
+      .container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 5px;
+      }
+      .brainsquare-a {
+        font-size: 40px !important;
+      }
+      .container a {
+        text-decoration: none;
+        font-size: 25px;
+      }
+      .brainsquare {
+        color: rgb(197, 68, 68);
+        margin: 5px 0;
+        text-align: center;
+        cursor: pointer;
+      }
+      .icon {
+        color: rgba(255, 0, 0, 0.7);
+        border-radius: 50%;
+        padding: 20px;
+        background-color: white;
+        width: 10%;
+      }
+      .logo {
+        text-align: center;
+        background-color: rgba(255, 0, 0, 0.6);
+        margin: 10px 10px 10px 10px;
+        border-radius: 4px;
+        color: red !important;
+      }
+
+      .logo i {
+        font-size: 48px;
+      }
+
+      .success {
+        color: rgba(0, 128, 0.7);
+      }
+      .content {
+        /* background-color: #f5f5f5; */
+        padding: 20px;
+        border-radius: 5px;
+      }
+
+      .social-icons i {
+        color: #0077b5;
+      }
+      .text-center {
+        text-align: center;
+      }
+      .center {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .margin-btn {
+        margin: 40px 0 !important;
+      }
+
+      .btn {
+        text-decoration: none !important;
+        color: #fff !important;
+        background-color: rgba(255, 0, 0, 0.6);
+        display: inline-block !important;
+        padding: 8px 20px !important;
+        border-radius: 5px !important;
+      }
+      .error {
+        color: red;
+      }
+      .margin-bottom {
+        margin-bottom: 40px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <a
+        href="https://brainsquaretech.com/"
+        target="_blank"
+        class="brainsquare-a"
+      >
+        <div class="brainsquare">BrainSquare</div>
+      </a>
+      <div class="logo">
+        <div
+          class="fa-solid fa-envelope fa-flip icon"
+          style="color: #fa0025; font-size: 40px"
+        >
+          <!-- <i
+            class="fa-solid fa-envelope fa-flip icon"
+            style="color: #fa0025"
+          ></i> -->
+        </div>
+      </div>
+      <div class="content">
+        <h1 class="text-center">Email Verification</h1>
+        <p>
+          <b class="success"> Hii Mitanshu, </b>
+        </p>
+        <p>
+          Thank you for signing up! You are almost set to start enjoying the
+          panel app. Please click the link below to verify your email address,
+          and get started. The link expires in about 10 hours.
+        </p>
+        <div class="margin-btn" style="text-align: center">
+          <a href="${verificationLink}" class="btn" target="_blank" class="btn"
+            >Verify Email</a
+          >
+        </div>
+        <div class="error margin-bottom">
+          <hr />
+        </div>
+        <div
+          class="social-icons"
+          style="display: flex; justify-content: center; align-items: center"
+        >
+          <a
+            href="https://www.facebook.com/brainsquaretech/"
+            class="fa-brands fa-facebook"
+            target="_blank"
+            style="margin-right: 5px"
+          >
+            <!-- <i
+              class="fa-brands fa-facebook"
+              style="margin-right: 5px; font-size: 30px; color: #1877f2"
+            ></i> -->
+          </a>
+          <a
+            href="#"
+            target="_blank"
+            class="fa-brands fa-instagram"
+            style="margin-right: 5px"
+          >
+            <!-- <i
+              class="fa-brands fa-instagram"
+              style="margin-right: 5px; font-size: 30px; color: #e4405f"
+            ></i> -->
+          </a>
+          <a
+            href="https://in.linkedin.com/company/brainsquare"
+            target="_blank"
+            class="fa-brands fa-linkedin"
+            style="margin-right: 5px"
+          >
+            <!-- <i
+              class="fa-brands fa-linkedin"
+              style="margin-right: 5px; font-size: 30px; color: #0077b5"
+            ></i> -->
+          </a>
+          <a
+            href="#  "
+            target="_blank"
+            class="fa-brands fa-twitter"
+            style="margin-right: 5px"
+          >
+            <!-- <i
+              class="fa-brands fa-twitter"
+              style="font-size: 30px; color: #1da1f2"
+            ></i> -->
+          </a>
+        </div>
+        <div style="text-align: center; margin-top: 15px; font-size: 12px">
+          1206, Shivalik Shilp, Iskcon Cross Road,
+        </div>
+        <div style="text-align: center; margin-top: 5px; font-size: 12px">
+          Sarkhej - Gandhinagar Hwy, Ahmedabad, Gujarat 380015
+        </div>
+        <div
+          style="
+            text-align: center;
+            margin-top: 25px;
+            margin-bottom: 50px !important;
+            font-size: 15px;
+            color: grey;
+          "
+        >
+          | Privacy Policy | Contact Details |
+        </div>
+        <div
+          style="
+            font-size: 9px;
+            text-decoration: underline;
+            cursor: pointer;
+            color: grey;
+          "
+        >
+          <table width="100%" cellpadding="0" cellspacing="0">
+            <tr>
+              <td align="left">Unsubscribe?</td>
+              <td align="right">by © Mitanshu Gor</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
+               `,
           };
+          mailOptions.html = mailOptions.html.replace('{{ verificationLink }}', verificationLink);
 
           transporter.sendMail(mailOptions, (error, info) => {
                if (error) {

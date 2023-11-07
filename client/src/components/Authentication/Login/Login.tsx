@@ -87,14 +87,16 @@ const SignIn = ({ height, width }: any) => {
       if (!!res) {
         setLoading(false);
         if (!res.data.isVerified) {
-          // toast.warn("Email not verified. Please verify your email to log in.");
           showErrorWithTimeout(
             "Email not verified. Please verify your email to log in.",
             3000
           );
+          setTimeout(() => {
+            toast.warn("Verify your email first.");
+          }, 1000);
         } else {
           login(res.data);
-          // localStorage.setItem("token", JSON.stringify(res.data));
+          localStorage.setItem("token", JSON.stringify(res.data));
           navigate(state?.path || "/", { replace: true });
           toast.success(res.data.message);
         }
@@ -103,6 +105,9 @@ const SignIn = ({ height, width }: any) => {
     } catch (error: any) {
       setLoading(false);
       showErrorWithTimeout(error.response.data.message, 3000);
+      setTimeout(() => {
+        toast.warn("Verify your email first.");
+      }, 1000);
       return;
     }
   };
