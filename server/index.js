@@ -800,7 +800,7 @@ app.post('/signup', upload.single('picture'), async (req, res) => {
                subject: 'Registration Successful.',
                // text: `Thank you for Registering! Please verify your email by clicking on the following link: ${verificationLink}`,
                html: `
-             <!DOCTYPE html>
+          <!DOCTYPE html>
 <html>
   <head>
     <meta charset="UTF-8" />
@@ -843,33 +843,31 @@ app.post('/signup', upload.single('picture'), async (req, res) => {
       .icon {
         color: rgba(255, 0, 0, 0.7);
         border-radius: 50%;
-        padding: 20px;
+        padding: 10px;
         background-color: white;
         width: 10%;
       }
       .logo {
-        text-align: center;
+        display: flex;
+        justify-content: center;
         background-color: rgba(255, 0, 0, 0.6);
         margin: 10px 10px 10px 10px;
         border-radius: 4px;
         color: red !important;
       }
 
-      .logo i {
-        font-size: 48px;
-      }
-
       .success {
         color: rgba(0, 128, 0.7);
       }
       .content {
-        /* background-color: #f5f5f5; */
         padding: 20px;
         border-radius: 5px;
       }
 
-      .social-icons i {
-        color: #0077b5;
+      .social-icons img {
+        filter: hue-rotate(
+          140deg
+        ) !important; /* Change the hue value to adjust the color */
       }
       .text-center {
         text-align: center;
@@ -909,21 +907,25 @@ app.post('/signup', upload.single('picture'), async (req, res) => {
       >
         <div class="brainsquare">BrainSquare</div>
       </a>
-      <div class="logo">
-        <div
-          class="fa-solid fa-envelope fa-flip icon"
-          style="color: #fa0025; font-size: 40px"
-        >
-          <!-- <i
-            class="fa-solid fa-envelope fa-flip icon"
-            style="color: #fa0025"
-          ></i> -->
-        </div>
+      <div class="logo" style="text-align: center">
+        <table cellpadding="0" cellspacing="0" border="0" width="100%">
+          <tr>
+            <td align="center">
+              <img
+                style="display: block"
+                src="https://images.emlcdn.net/cdn/14/QHcab14c9/email.png"
+                alt="Facebook"
+                height="48"
+                width="48"
+              />
+            </td>
+          </tr>
+        </table>
       </div>
       <div class="content">
         <h1 class="text-center">Email Verification</h1>
         <p>
-          <b class="success"> Hii Mitanshu, </b>
+          <b class="success"> Hii ${newAdmin.firstname}, </b>
         </p>
         <p>
           Thank you for signing up! You are almost set to start enjoying the
@@ -938,54 +940,71 @@ app.post('/signup', upload.single('picture'), async (req, res) => {
         <div class="error margin-bottom">
           <hr />
         </div>
-        <div
-          class="social-icons"
-          style="display: flex; justify-content: center; align-items: center"
-        >
-          <a
-            href="https://www.facebook.com/brainsquaretech/"
-            class="fa-brands fa-facebook"
-            target="_blank"
-            style="margin-right: 5px"
+        <div class="social-icons" style="text-align: center">
+          <table
+            cellpadding="0"
+            cellspacing="0"
+            border="0"
+            style="display: inline-table"
           >
-            <!-- <i
-              class="fa-brands fa-facebook"
-              style="margin-right: 5px; font-size: 30px; color: #1877f2"
-            ></i> -->
-          </a>
-          <a
-            href="#"
-            target="_blank"
-            class="fa-brands fa-instagram"
-            style="margin-right: 5px"
-          >
-            <!-- <i
-              class="fa-brands fa-instagram"
-              style="margin-right: 5px; font-size: 30px; color: #e4405f"
-            ></i> -->
-          </a>
-          <a
-            href="https://in.linkedin.com/company/brainsquare"
-            target="_blank"
-            class="fa-brands fa-linkedin"
-            style="margin-right: 5px"
-          >
-            <!-- <i
-              class="fa-brands fa-linkedin"
-              style="margin-right: 5px; font-size: 30px; color: #0077b5"
-            ></i> -->
-          </a>
-          <a
-            href="#  "
-            target="_blank"
-            class="fa-brands fa-twitter"
-            style="margin-right: 5px"
-          >
-            <!-- <i
-              class="fa-brands fa-twitter"
-              style="font-size: 30px; color: #1da1f2"
-            ></i> -->
-          </a>
+            <tr>
+              <td style="width: 10px"></td>
+              <td>
+                <a
+                  href="https://www.facebook.com/brainsquaretech/"
+                  target="_blank"
+                >
+                  <img
+                    style="display: block"
+                    src="https://images.emlcdn.net/cdn/14/QHcab14c9/facebook4.png"
+                    alt="Facebook"
+                    height="32"
+                    width="32"
+                  />
+                </a>
+              </td>
+              <td style="width: 10px"></td>
+              <td>
+                <a href="#" target="_blank">
+                  <img
+                    style="display: block"
+                    src="https://images.emlcdn.net/cdn/14/QHcab14c9/insta.png"
+                    alt="Facebook"
+                    height="32"
+                    width="32"
+                  />
+                </a>
+              </td>
+              <td style="width: 10px"></td>
+              <td>
+                <a
+                  href="https://in.linkedin.com/company/brainsquare"
+                  target="_blank"
+                >
+                  <img
+                    style="display: block"
+                    src="https://images.emlcdn.net/cdn/14/QHcab14c9/linkedin.png"
+                    alt="Facebook"
+                    height="32"
+                    width="32"
+                  />
+                </a>
+              </td>
+              <td style="width: 10px"></td>
+              <td>
+                <a href="#" target="_blank">
+                  <img
+                    style="display: block"
+                    src="https://images.emlcdn.net/cdn/14/QHcab14c9/twitter.png"
+                    alt="Facebook"
+                    height="32"
+                    width="32"
+                  />
+                </a>
+              </td>
+              <td style="width: 10px"></td>
+            </tr>
+          </table>
         </div>
         <div style="text-align: center; margin-top: 15px; font-size: 12px">
           1206, Shivalik Shilp, Iskcon Cross Road,
