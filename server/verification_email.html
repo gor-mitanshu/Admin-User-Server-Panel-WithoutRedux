@@ -62,11 +62,6 @@
         border-radius: 5px;
       }
 
-      .social-icons img {
-        filter: hue-rotate(
-          140deg
-        ) !important; /* Change the hue value to adjust the color */
-      }
       .text-center {
         text-align: center;
       }
@@ -123,7 +118,7 @@
       <div class="content">
         <h1 class="text-center">Email Verification</h1>
         <p>
-          <b class="success"> Hii Mitanshu, </b>
+          <b class="success"> Hii {{firstname}} {{lastname}}, </b>
         </p>
         <p>
           Thank you for signing up! You are almost set to start enjoying the
@@ -131,7 +126,11 @@
           and get started. The link expires in about 10 hours.
         </p>
         <div class="margin-btn" style="text-align: center">
-          <a href="${verificationLink}" class="btn" target="_blank" class="btn"
+          <a
+            href="${{verificationLink}}"
+            class="btn"
+            target="_blank"
+            class="btn"
             >Verify Email</a
           >
         </div>

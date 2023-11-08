@@ -30,8 +30,6 @@ mongoose.connect(`${process.env.MONGO_URL}/${process.env.MONGO_DBNAME}`).then(su
 
 function generateOTP () {
 
-     // Declare a digits variable  
-     // which stores all digits 
      let digits = '0123456789';
      let OTP = '';
      for (let i = 0; i < 4; i++) {
@@ -759,9 +757,9 @@ app.post('/signup', upload.single('picture'), async (req, res) => {
                     data: null,
                });
           }
-          const expireIn = "10h";
-          const hashedPassword = await bcrypt.hash(password, 10);
+          const expireIn = "1h";
           const verificationToken = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: expireIn });
+          const hashedPassword = await bcrypt.hash(password, 10);
 
           let picture = '';
           if (req.file) {
@@ -864,11 +862,6 @@ app.post('/signup', upload.single('picture'), async (req, res) => {
         border-radius: 5px;
       }
 
-      .social-icons img {
-        filter: hue-rotate(
-          140deg
-        ) !important; /* Change the hue value to adjust the color */
-      }
       .text-center {
         text-align: center;
       }
@@ -930,7 +923,7 @@ app.post('/signup', upload.single('picture'), async (req, res) => {
         <p>
           Thank you for signing up! You are almost set to start enjoying the
           panel app. Please click the link below to verify your email address,
-          and get started. The link expires in about 10 hours.
+          and get started. The link expires in about 1 Hour.
         </p>
         <div class="margin-btn" style="text-align: center">
           <a href="${verificationLink}" class="btn" target="_blank" class="btn"
@@ -1044,8 +1037,6 @@ app.post('/signup', upload.single('picture'), async (req, res) => {
 </html>
                `,
           };
-          mailOptions.html = mailOptions.html.replace('{{ verificationLink }}', verificationLink);
-
           transporter.sendMail(mailOptions, (error, info) => {
                if (error) {
                     console.error('Error sending email:', error);
@@ -1084,7 +1075,22 @@ app.get('/verify/:verificationToken', async (req, res) => {
                return res.status(200).send({ message: 'Email already verified', success: true });
           }
 
-          // Mark the user as verified
+          try {
+               jwt.verify(verificationToken, process.env.JWT_SECRET);
+          } catch (err) {
+               if (err instanceof jwt.TokenExpiredError) {
+                    return res.status(401).send({
+                         message: 'Token has expired',
+                         success: false,
+                    });
+               } else {
+                    return res.status(500).send({
+                         message: 'Error verifying the token',
+                         success: false,
+                    });
+               }
+          }
+
           user.isVerified = true;
           user.verificationToken = undefined;
           await user.save();

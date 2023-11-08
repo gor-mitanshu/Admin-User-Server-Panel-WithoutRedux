@@ -16,8 +16,9 @@ const UserVerification = () => {
         if (res.status === 200) {
           setVerificationStatus("Email verification successful.");
         }
-      } catch (error) {
-        setVerificationStatus("Invalid verification token.");
+      } catch (error: any) {
+        console.log(error?.response.data.message);
+        setVerificationStatus(error?.response.data.message);
       }
     };
 

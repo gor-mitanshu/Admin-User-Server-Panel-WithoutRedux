@@ -11,6 +11,7 @@ const Dashboard = (): JSX.Element => {
     active: 0,
     inactive: 0,
   });
+  const animationDuration = 800;
   useEffect(() => {
     const getUsers = async () => {
       try {
@@ -24,18 +25,37 @@ const Dashboard = (): JSX.Element => {
           (user: any) => user.status === "inactive"
         );
 
-        setUserCounts({
-          total: users.length,
-          active: activeUsers.length,
-          inactive: inactiveUsers.length,
-        });
+        const updateCounts = () => {
+          const total = users.length;
+          const active = activeUsers.length;
+          const inactive = inactiveUsers.length;
+
+          setUserCounts((prevCounts) => ({
+            total: prevCounts.total < total ? prevCounts.total + 1 : total,
+            active: prevCounts.active < active ? prevCounts.active + 1 : active,
+            inactive:
+              prevCounts.inactive < inactive
+                ? prevCounts.inactive + 1
+                : inactive,
+          }));
+        };
+        const interval = animationDuration / Math.max(users.length, 1);
+        let step = 0;
+        const animation = setInterval(() => {
+          updateCounts();
+          step++;
+          if (step >= users.length) {
+            clearInterval(animation);
+          }
+        }, interval);
       } catch (error: any) {
         console.log(error.data.data.message);
       }
     };
 
     getUsers();
-  }, []);
+  }, [animationDuration]);
+
   return (
     <>
       <Grid container padding={2} spacing={1}>
