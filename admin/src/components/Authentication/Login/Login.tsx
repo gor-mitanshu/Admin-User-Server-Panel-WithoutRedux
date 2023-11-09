@@ -16,6 +16,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useAuth } from "../../ProtectedRoute/AuthContext";
+// import { loginService } from "../../Service/apiService";
 
 interface IUser {
   email: string;
@@ -98,6 +99,37 @@ const SignIn = () => {
       return;
     }
   };
+
+  // const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  //   event.preventDefault();
+  //   if (!user.email) {
+  //     showErrorWithTimeout("Please Enter Your Email", 3000);
+  //     return;
+  //   }
+  //   if (!user.password) {
+  //     showErrorWithTimeout("Please Enter Your Password", 3000);
+  //     return;
+  //   }
+
+  //   try {
+  //     const loginSuccess = await loginService(user.email, user.password);
+
+  //     if (loginSuccess) {
+  //       login(loginSuccess.data.data);
+  //       navigate(state?.path || "/", { replace: true });
+  //       toast.success("Login successful");
+  //     } else {
+  //       showErrorWithTimeout(
+  //         "Login failed. Please check your credentials.",
+  //         3000
+  //       );
+  //     }
+  //   } catch (error) {
+  //     // Handle errors here, such as network issues or server problems
+  //     showErrorWithTimeout("An error occurred while trying to log in.", 3000);
+  //     console.error(error);
+  //   }
+  // };
 
   return (
     <ThemeProvider theme={defaultTheme}>

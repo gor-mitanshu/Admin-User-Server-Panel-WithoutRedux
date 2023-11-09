@@ -10,7 +10,7 @@ import {
   Tooltip,
   Zoom,
 } from "@mui/material";
-import { Dashboard, Key, Logout, Person } from "@mui/icons-material";
+import { Dashboard, Key, Logout, Payment, Person } from "@mui/icons-material";
 import "./Sidebar.css";
 import { NavLink, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -59,6 +59,7 @@ const Sidebar = (): JSX.Element => {
     { label: "Dashboard", icon: <Dashboard />, path: "/dashboard" },
     { label: "Profile", icon: <Person />, path: "/profile" },
     { label: "Change Password", icon: <Key />, path: `/changepassword/${id}` },
+    { label: "Subscription", icon: <Payment />, path: `/payment` },
   ];
 
   return (

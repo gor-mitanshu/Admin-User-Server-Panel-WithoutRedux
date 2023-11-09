@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { AppBar, Toolbar, Typography } from "@mui/material";
+import { AppBar, Avatar, Toolbar, Typography } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import "./Navbar.css";
 import axios from "axios";
@@ -11,7 +11,7 @@ const Navbar = ({ toogleSidebar }: any): JSX.Element => {
     toogleSidebar(isOpen);
   };
 
-  const [user, setUser] = useState<string>("");
+  const [user, setUser] = useState<any>("");
 
   useEffect(() => {
     const getUserData = async () => {
@@ -25,7 +25,7 @@ const Navbar = ({ toogleSidebar }: any): JSX.Element => {
             }
           );
           if (res && res.data.data) {
-            setUser(res.data.data.firstname);
+            setUser(res.data.data);
           }
         }
       } catch (error: any) {
@@ -34,7 +34,7 @@ const Navbar = ({ toogleSidebar }: any): JSX.Element => {
     };
 
     getUserData();
-  }, []);
+  }, [user.firstname, user.picture]);
   return (
     <div>
       <AppBar className="appbar">
@@ -52,7 +52,25 @@ const Navbar = ({ toogleSidebar }: any): JSX.Element => {
               alignItems: "center",
             }}
           >
-            <Typography className="navbar-title ellipsis">{user}</Typography>
+            {user?.picture ? (
+              <Avatar
+                src={`${process.env.REACT_APP_API}/${user?.picture}`}
+                alt={user?.firstname
+                  .concat(".", user?.lastname)
+                  .split(" ")
+                  .map((n: any) => n[0])
+                  .join("")
+                  .toUpperCase()}
+                sx={{
+                  width: "40px",
+                  height: "40px",
+                  // margin: "0 auto 20px",
+                }}
+              />
+            ) : null}
+            <Typography className="navbar-title ellipsis">
+              {user.firstname}
+            </Typography>
           </div>
         </Toolbar>
       </AppBar>

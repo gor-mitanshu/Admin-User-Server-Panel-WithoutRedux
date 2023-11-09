@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
-import axios from "axios";
+// import axios from "axios";
 import { Avatar, Typography, Button, Grid } from "@mui/material";
 import Loader from "../Loader/Loader";
+import { getUserProfile } from "../Service/apiService";
 
 interface IUser {
   _id: string;
@@ -18,36 +19,47 @@ const Profile = () => {
   const [user, setUser] = useState<IUser | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
 
+  // useEffect(() => {
+  //   const getUser = async () => {
+  //     setLoading(true);
+  //     try {
+  //       const accessToken = localStorage.getItem("token");
+  //       if (accessToken) {
+  //         const res = await axios.get(
+  //           `${process.env.REACT_APP_API}/loggedadmin`,
+  //           {
+  //             headers: { Authorization: `Bearer ${accessToken}` },
+  //           }
+  //         );
+  //         if (!!res) {
+  //           setLoading(false);
+  //           setUser(res.data.data);
+  //         } else {
+  //           console.log("User not found");
+  //         }
+  //       } else {
+  //         setLoading(false);
+  //         console.log("error");
+  //       }
+  //     } catch (error: any) {
+  //       setLoading(false);
+  //       console.log(error.response.data.message);
+  //     }
+  //   };
+  //   getUser();
+  // }, []);
+
   useEffect(() => {
-    const getUser = async () => {
+    const fetchUserProfile = async () => {
       setLoading(true);
-      try {
-        const accessToken = localStorage.getItem("token");
-        if (accessToken) {
-          const res = await axios.get(
-            `${process.env.REACT_APP_API}/loggedadmin`,
-            {
-              headers: { Authorization: `Bearer ${accessToken}` },
-            }
-          );
-          if (!!res) {
-            setLoading(false);
-            setUser(res.data.data);
-          } else {
-            console.log("User not found");
-          }
-        } else {
-          setLoading(false);
-          console.log("error");
-        }
-      } catch (error: any) {
+      const response: any = await getUserProfile();
+      if (response) {
         setLoading(false);
-        console.log(error.response.data.message);
+        setUser(response.data.data);
       }
     };
-    getUser();
+    fetchUserProfile();
   }, []);
-
   return (
     <>
       {!loading ? (

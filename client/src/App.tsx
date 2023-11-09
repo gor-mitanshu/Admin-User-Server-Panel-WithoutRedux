@@ -12,6 +12,7 @@ import UpdateProfile from "./components/Profile/UpdateProfile";
 import SideChangePassword from "./components/SidebarChangePassword/SideChangePassword";
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
 import UserVerification from "./components/Authentication/UserVerification/UserVerification";
+import Payment from "./components/Payment/Payment";
 
 function App() {
   const ProtectedRoutes = ProtectedRoute();
@@ -77,6 +78,7 @@ function App() {
               </ProtectedRoutes>
             }
           />
+          <Route path="/payment" element={<Payment />} />
         </Route>
       </Routes>
     </div>

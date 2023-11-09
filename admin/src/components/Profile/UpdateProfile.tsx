@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router";
 import axios from "axios";
 import { Avatar, Typography, Button, Grid, TextField } from "@mui/material";
 import { toast } from "react-toastify";
+// import { getProfileById, updateProfile } from "../Service/apiService";
 
 interface IUser {
   id?: string;
@@ -44,6 +45,18 @@ const UpdateProfile = () => {
     };
     getUser();
   }, [id]);
+
+  // useEffect(() => {
+  //   const getUserData = async () => {
+  //     const userResponse = await getProfileById(id);
+  //     if (userResponse) {
+  //       const userData: any = userResponse.data.data;
+  //       setEditedUser(userData);
+  //       setInitialPicture(userData.picture);
+  //     }
+  //   };
+  //   getUserData();
+  // }, [id]);
 
   const showErrorWithTimeout = (errorMessage: string, timeout: number) => {
     setError(errorMessage);
@@ -118,6 +131,50 @@ const UpdateProfile = () => {
       return;
     }
   };
+
+  // const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  //   event.preventDefault();
+  //   if (!editedUser.firstname) {
+  //     showErrorWithTimeout("Please Enter Your firstname", 3000);
+  //     return;
+  //   }
+  //   if (!editedUser.lastname) {
+  //     showErrorWithTimeout("Please Enter Your lastname", 3000);
+  //     return;
+  //   }
+  //   if (!editedUser.email) {
+  //     showErrorWithTimeout("Please Enter Your Email", 3000);
+  //     return;
+  //   }
+  //   if (!editedUser.phone) {
+  //     showErrorWithTimeout("Please Enter Your Phone", 3000);
+  //     return;
+  //   }
+  //   try {
+  //     const formData = new FormData();
+  //     formData.append("firstname", editedUser.firstname);
+  //     formData.append("lastname", editedUser.lastname);
+  //     formData.append("email", editedUser.email);
+  //     formData.append("phone", editedUser.phone);
+
+  //     if (imageChanged && editedUser.picture instanceof File) {
+  //       formData.append("picture", editedUser.picture);
+  //     } else {
+  //       formData.append("picture", initialPicture);
+  //     }
+
+  //     const updated = await updateProfile(id, formData);
+  //     if (updated) {
+  //       console.log(updated);
+  //       navigate(`/profile`);
+  //       toast.success("User Updated Successfully");
+  //     } else {
+  //       showErrorWithTimeout("Unable to edit", 3000);
+  //     }
+  //   } catch (error: any) {
+  //     showErrorWithTimeout(error.response.data.message, 3000);
+  //   }
+  // };
 
   return (
     <>

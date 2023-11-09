@@ -59,10 +59,21 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage });
 
-const instance = new Razorpay({
+const razorpay = new Razorpay({
      key_id: process.env.KEY_ID,
      key_secret: process.env.KEY_SECRET,
-})
+});
+
+function verifyRazorpaySignature (razorpayOrderId, razorpayPaymentId, razorpaySignature) {
+     const secret = process.env.KEY_SECRET;
+
+     const expectedSignature = crypto
+          .createHmac('sha256', secret)
+          .update(razorpayOrderId + '|' + razorpayPaymentId)
+          .digest('hex');
+
+     return expectedSignature === razorpaySignature;
+}
 
 /* ADMIN API's */
 app.post('/admin-signup', upload.single('picture'), async (req, res) => {
@@ -1049,12 +1060,7 @@ app.post('/signup', upload.single('picture'), async (req, res) => {
                if (error) {
                     console.error('Error sending email:', error);
                } else {
-                    // console.log('Email sent:', info.response);
-                    return res.status(200).send({
-                         success: true,
-                         message: 'Email sent successfully',
-                         technicalMessage: 'Email sent: ' + info.response
-                    });
+                    console.log('Email sent:', info.response);
                }
           });
 
@@ -1410,85 +1416,52 @@ app.post('/resetpassword/:id/:token', async (req, res) => {
      }
 });
 
-// count for active , inactive and total users
-app.get('/getUserCounts', async (req, res) => {
+// Payment Gateway for Razorpay
+app.post('/processPayment', async (req, res) => {
      try {
-          const activeUsersCount = await User.countDocuments({ role: 'user', status: 'active' });
-          const inactiveUsersCount = await User.countDocuments({ role: 'user', status: 'inactive' });
-          const totalUsersCount = await User.countDocuments({ role: 'user' });
+          const {
+               razorpayPaymentId,
+               razorpaySignature,
+               razorpayOrderId,
+               amount,
+               userId,
+          } = req.body;
 
-          return res.status(200).send({
-               success: true,
-               message: 'Success',
-               data: {
-                    active: activeUsersCount,
-                    inactive: inactiveUsersCount,
-                    total: totalUsersCount,
-               },
+          const isSignatureValid = verifyRazorpaySignature(razorpayOrderId, razorpayPaymentId, razorpaySignature);
+
+          if (!isSignatureValid) {
+               return res.status(400).send({ success: false, message: 'Invalid Razorpay signature' });
+          }
+
+          const newPayment = new Payment({
+               razorpayPaymentId,
+               razorpaySignature,
+               razorpayOrderId,
+               amount,
+               userId,
           });
+
+          const savedPayment = await newPayment.save();
+
+          if (savedPayment) {
+               return res.status(200).send({ success: true, message: 'Payment saved successfully' });
+          } else {
+               return res.status(500).send({ success: false, message: 'Error saving payment data' });
+          }
      } catch (error) {
-          res.status(500).send({
-               success: false,
-               message: 'Some Error Occurred',
-               error: error.message,
-          });
+          console.error('Error processing payment:', error);
+          return res.status(500).send({ success: false, message: 'Internal server error' });
      }
 });
-
 
 // Add custom field using querry
 app.post('/addActivefield', async (req, res) => {
      try {
           const result = await User.updateMany({}, { $set: { status: "active" } });
-          // console.log('User records updated successfully.');
+          console.log('User records updated successfully.');
           return res.status(200).send('User records updated successfully.');
      } catch (err) {
           console.error('Error updating user records:', err);
           return res.status(500).send('Error updating user records');
      }
 });
-
-app.post('/checkout', async (req, res) => {
-     try {
-          const options = {
-               amount: Number(req.body.amount * 100),
-               currency: "INR",
-          };
-          const order = await instance.orders.create(options)
-          res.status(200).send({ success: true, message: "Successfully Ordered", order })
-     } catch (error) {
-          console.log(error)
-          res.status(400).send({ success: false, message: error.message })
-     }
-});
-
-app.post('/paymentVerification', async (req, res) => {
-     // console.log(req.body);
-
-     const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
-
-     const body = razorpay_order_id + "|" + razorpay_payment_id;
-     const expectedSignature = crypto.createHmac('sha256', process.env.KEY_SECRET).update(body.toString()).digest('hex');
-     // console.log("Sign is recieved", razorpay_signature)
-     // console.log("Sign is generated", expectedSignature)
-     // const response = { "signatureIsInvalid": "false" }
-     // if (expectedSignature === req.body.razopPay_signature) {
-     //      response = { "signatureIsInvalid": "true" }
-     //      res.send(response);
-     // }
-
-     const isAuthenticated = expectedSignature === razorpay_signature;
-     if (isAuthenticated) {
-          await Payment.create({
-               razorpay_signature, razorpay_payment_id, razorpay_order_id
-          })
-          // res.status(200).send({ success: true, });
-          res.redirect(`${process.env.REACT_URL_USER}/payment`)
-     } else {
-          res.status(400).send({ success: false, });
-     }
-});
-
-app.get("/getRazorPayKey", (req, res) =>
-     res.status(200).send({ success: true, key: process.env.KEY_ID })
-);
