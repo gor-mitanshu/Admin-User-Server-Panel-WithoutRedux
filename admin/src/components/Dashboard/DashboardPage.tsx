@@ -12,49 +12,47 @@ const Dashboard = (): JSX.Element => {
     inactive: 0,
   });
   const animationDuration = 800;
-  useEffect(() => {
-    const getUsers = async () => {
-      try {
-        const res = await axios.get(`${process.env.REACT_APP_API}/getUsers`);
-        const users = res.data.data;
 
-        const activeUsers = users.filter(
-          (user: any) => user.status === "active"
+  useEffect(() => {
+    const fetchUserCounts = async () => {
+      try {
+        const response = await axios.get(
+          `${process.env.REACT_APP_API}/getUserCounts`
         );
-        const inactiveUsers = users.filter(
-          (user: any) => user.status === "inactive"
-        );
+        const { data } = response.data;
 
         const updateCounts = () => {
-          const total = users.length;
-          const active = activeUsers.length;
-          const inactive = inactiveUsers.length;
-
           setUserCounts((prevCounts) => ({
-            total: prevCounts.total < total ? prevCounts.total + 1 : total,
-            active: prevCounts.active < active ? prevCounts.active + 1 : active,
+            total:
+              prevCounts.total < data.total ? prevCounts.total + 1 : data.total,
+            active:
+              prevCounts.active < data.active
+                ? prevCounts.active + 1
+                : data.active,
             inactive:
-              prevCounts.inactive < inactive
+              prevCounts.inactive < data.inactive
                 ? prevCounts.inactive + 1
-                : inactive,
+                : data.inactive,
           }));
         };
-        const interval = animationDuration / Math.max(users.length, 1);
+
+        const interval = animationDuration / Math.max(data.total, 1);
         let step = 0;
+
         const animation = setInterval(() => {
           updateCounts();
           step++;
-          if (step >= users.length) {
+          if (step >= data.total) {
             clearInterval(animation);
           }
         }, interval);
-      } catch (error: any) {
-        console.log(error.data.data.message);
+      } catch (error) {
+        console.error("Error fetching user counts:", error);
       }
     };
 
-    getUsers();
-  }, [animationDuration]);
+    fetchUserCounts();
+  }, []);
 
   return (
     <>

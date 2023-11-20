@@ -7,7 +7,7 @@ import { Button, CardActionArea, CardActions } from "@mui/material";
 import axios from "axios";
 
 const Cards = () => {
-  console.log(process.env.REACT_APP_KEY_ID);
+  // console.log(process.env.REACT_APP_KEY_ID);
   const checkOutHandler = async () => {
     try {
       const amount = 5000;
@@ -19,14 +19,14 @@ const Cards = () => {
       console.log(window);
       console.log(order);
       const options = {
-        key: "rzp_test_rFqc4FPuqJMIXW",
+        key: process.env.REACT_APP_KEY_ID,
         amount: order.amount,
         currency: "INR",
         name: "XYZ ABC",
         description: "Test Transaction",
         image: "https://example.com/your_logo",
         order_id: order.id,
-        callback_url: "http://localhost:1000/paymentVerification",
+        callback_url: `${process.env.REACT_APP_API}/paymentVerification`,
         prefill: {
           name: "Gaurav Kumar",
           email: "gaurav.kumar@example.com",

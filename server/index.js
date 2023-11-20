@@ -1435,7 +1435,6 @@ app.get('/getUserCounts', async (req, res) => {
      }
 });
 
-
 // Add custom field using querry
 app.post('/addActivefield', async (req, res) => {
      try {
@@ -1483,7 +1482,7 @@ app.post('/paymentVerification', async (req, res) => {
                razorpay_signature, razorpay_payment_id, razorpay_order_id
           })
           // res.status(200).send({ success: true, });
-          res.redirect(`${process.env.REACT_URL_USER}/payment`)
+          res.redirect(`${process.env.REACT_URL_USER}/paymentsuccess?reference=${razorpay_payment_id}`)
      } else {
           res.status(400).send({ success: false, });
      }

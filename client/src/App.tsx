@@ -12,6 +12,7 @@ import UpdateProfile from "./components/Profile/UpdateProfile";
 import SideChangePassword from "./components/SidebarChangePassword/SideChangePassword";
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
 import UserVerification from "./components/Authentication/UserVerification/UserVerification";
+import PaymentSuccess from "./components/Payment/PaymentSuccess/PaymentSuccess";
 import Payment from "./components/Payment/Payment";
 
 function App() {
@@ -79,6 +80,7 @@ function App() {
             }
           />
           <Route path="/payment" element={<Payment />} />
+          <Route path="/paymentsuccess" element={<PaymentSuccess />} />
         </Route>
       </Routes>
     </div>
