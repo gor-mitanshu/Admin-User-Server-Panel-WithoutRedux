@@ -105,9 +105,6 @@ const SignIn = ({ height, width }: any) => {
     } catch (error: any) {
       setLoading(false);
       showErrorWithTimeout(error.response.data.message, 3000);
-      setTimeout(() => {
-        toast.warn("Verify your email first.");
-      }, 1000);
       return;
     }
   };

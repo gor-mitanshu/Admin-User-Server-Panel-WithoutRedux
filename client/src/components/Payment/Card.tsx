@@ -10,7 +10,7 @@ const Cards = () => {
   // console.log(process.env.REACT_APP_KEY_ID);
   const checkOutHandler = async () => {
     try {
-      const amount = 5000;
+      const amount = 6;
       const {
         data: { order },
       } = await axios.post(`${process.env.REACT_APP_API}/checkout`, {
@@ -61,14 +61,14 @@ const Cards = () => {
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
+              flexDirection: "column",
             }}
           >
             <Typography gutterBottom variant="h5" component="div">
               Laptop
             </Typography>
-            <br />
             <Typography gutterBottom variant="h5" component="div">
-              5000 ₹
+              6 ₹
             </Typography>
           </CardContent>
         </CardActionArea>
