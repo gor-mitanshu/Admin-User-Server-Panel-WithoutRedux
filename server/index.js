@@ -1481,8 +1481,8 @@ app.post('/paymentVerification', async (req, res) => {
           await Payment.create({
                razorpay_signature, razorpay_payment_id, razorpay_order_id
           })
-          // res.status(200).send({ success: true, });
-          res.redirect(`${process.env.REACT_URL_USER}/paymentsuccess?reference=${razorpay_payment_id}`)
+          res.status(200).send({ success: true, });
+          // res.redirect(`${process.env.REACT_URL_USER}/paymentsuccess?reference=${razorpay_payment_id}`)
      } else {
           res.status(400).send({ success: false, });
      }
@@ -1491,3 +1491,48 @@ app.post('/paymentVerification', async (req, res) => {
 app.get("/getRazorPayKey", (req, res) =>
      res.status(200).send({ success: true, key: process.env.KEY_ID })
 );
+
+app.post('/getRazorPaydetails', async (req, res) => {
+     try {
+          const { razorpay_payment_id,
+               razorpay_order_id,
+               razorpay_signature,
+               uid,
+               firstname,
+               lastname,
+               email,
+               amount,
+               order_id,
+               currency,
+               order_created_at,
+               amount_due,
+               amount_paid,
+               attempts } = req.body;
+
+          const paymnet = new Payment({
+               razorpay_payment_id,
+               razorpay_order_id,
+               razorpay_signature,
+               uid,
+               amount,
+               order_id,
+               currency,
+               order_created_at,
+               amount_due,
+               amount_paid,
+               attempts
+          });
+          await paymnet.save();
+          return res.status(200).send({
+               message: 'Payment Successful',
+               data: paymnet,
+               success: true
+          });
+     } catch (error) {
+          console.error('Error in Payment :', error.message);
+          return res.status(400).send({
+               error: 'Internal server error',
+               error: error.message
+          });
+     }
+});

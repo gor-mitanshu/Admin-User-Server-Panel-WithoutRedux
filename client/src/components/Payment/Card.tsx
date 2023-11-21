@@ -5,32 +5,82 @@ import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
 import { Button, CardActionArea, CardActions } from "@mui/material";
 import axios from "axios";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
-const Cards = () => {
-  // console.log(process.env.REACT_APP_KEY_ID);
+const Product = ({ product }: any) => {
+  const navigate = useNavigate();
   const checkOutHandler = async () => {
     try {
-      const amount = 6;
+      const amount = product.price;
+      const token = localStorage.getItem("token");
+      const response = await axios.get(
+        `${process.env.REACT_APP_API}/loggeduser`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      console.log(response.data.data);
+      const data = response.data.data;
+
+      const { _id: userId, firstname, lastname, email } = data;
+
       const {
         data: { order },
       } = await axios.post(`${process.env.REACT_APP_API}/checkout`, {
         amount,
+        userId,
+        userName: `${firstname} ${lastname}`,
+        userEmail: email,
       });
-      console.log(window);
+
       console.log(order);
+
       const options = {
         key: process.env.REACT_APP_KEY_ID,
         amount: order.amount,
         currency: "INR",
-        name: "XYZ ABC",
+        name: product.name,
         description: "Test Transaction",
-        image: "https://example.com/your_logo",
+        image: product.image,
         order_id: order.id,
-        callback_url: `${process.env.REACT_APP_API}/paymentVerification`,
+        // callback_url: `${process.env.REACT_APP_API}/paymentVerification`,
         prefill: {
-          name: "Gaurav Kumar",
-          email: "gaurav.kumar@example.com",
+          name: `${firstname} ${lastname}`,
+          email: email,
           contact: "1234567890",
+        },
+        handler: async function (response: any) {
+          debugger;
+          console.log(response);
+          const body = {
+            razorpay_payment_id: response.razorpay_payment_id,
+            razorpay_order_id: response.razorpay_order_id,
+            razorpay_signature: response.razorpay_signature,
+            uid: data._id,
+            amount: order.amount,
+            order_id: order.id,
+            currency: order.currency,
+            order_created_at: order.created_at,
+            amount_due: order.amount_due,
+            amount_paid: order.amount_paid,
+            attempts: order.attempts,
+          };
+          const res = await axios.post(
+            `${process.env.REACT_APP_API}/getRazorPaydetails`,
+            body
+          );
+          if (!!res) {
+            toast.success(res.data.message);
+            console.log(res);
+            navigate("/paymentsuccess");
+          }
+          // alert(response.razorpay_payment_id);
+          // alert(response.razorpay_order_id);
+          // alert(response.razorpay_signature);
         },
         notes: {
           address: "Razorpay Corporate Office",
@@ -40,12 +90,14 @@ const Cards = () => {
         },
       };
 
-      const razor: any = (window as any).Razorpay(options);
+      const razor = (window as any).Razorpay(options);
       razor.open();
+      console.log(razor);
     } catch (error) {
       console.log(error);
     }
   };
+
   return (
     <div>
       <Card sx={{ maxWidth: 345 }}>
@@ -53,8 +105,8 @@ const Cards = () => {
           <CardMedia
             component="img"
             height="150"
-            image="https://cdn.shopify.com/s/files/1/1684/4603/products/MacBookPro13_Mid2012_NonRetina_Silver.png"
-            alt="green iguana"
+            image={product.image}
+            alt={product.name}
           />
           <CardContent
             sx={{
@@ -65,10 +117,10 @@ const Cards = () => {
             }}
           >
             <Typography gutterBottom variant="h5" component="div">
-              Laptop
+              {product.name}
             </Typography>
             <Typography gutterBottom variant="h5" component="div">
-              6 ₹
+              {product.price} ₹
             </Typography>
           </CardContent>
         </CardActionArea>
@@ -93,4 +145,4 @@ const Cards = () => {
   );
 };
 
-export default Cards;
+export default Product;
