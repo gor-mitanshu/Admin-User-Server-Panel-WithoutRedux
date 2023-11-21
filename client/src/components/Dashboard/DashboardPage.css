@@ -4,18 +4,6 @@
   color: #fff !important;
   background-color: black !important;
 }
-.card-1 {
-  background-image: url(https://img.freepik.com/premium-vector/abstract-bubbles-black-background_336924-3490.jpg) !important;
-}
-.card-2 {
-  background-image: url(https://img.freepik.com/premium-photo/bubbles-orange-water-3d-render_85770-45.jpg);
-}
-.card-3 {
-  background-image: url(https://img.freepik.com/premium-vector/shiny-abstract-bubbles-decorated-green-background-copyspace_1302-19158.jpg?w=2000);
-}
-.card-4 {
-  background-image: url(https://img.freepik.com/premium-photo/soap-bubbles-red-background-red-abstract-background_3248-503.jpg?w=2000);
-}
 .card-box {
   position: absolute !important;
   top: 0 !important;
@@ -24,4 +12,16 @@
   right: 0 !important;
   background-color: rgba(0, 0, 0, 0.2) !important;
   content: "" !important;
+}
+.card-active {
+  background-color: rgb(145, 196, 149) !important;
+  color: darkgreen !important;
+}
+.card-inactive {
+  background-color: rgb(247, 145, 149) !important;
+  color: darkred !important;
+}
+.card-total-users {
+  background-color: #ffc252 !important;
+  color: #b06900 !important;
 }

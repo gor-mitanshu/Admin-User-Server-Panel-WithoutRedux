@@ -1,18 +1,18 @@
 import React from "react";
 import { Grid } from "@mui/material";
-import Product from "./Card";
+import ProductCard from "./ProductCard";
 
 function Payment() {
   const laptopDetails = {
     name: "Laptop",
-    price: 6,
+    price: 600,
     image:
       "https://cdn.shopify.com/s/files/1/1684/4603/products/MacBookPro13_Mid2012_NonRetina_Silver.png",
   };
 
   return (
     <Grid padding={2}>
-      <Product product={laptopDetails} />
+      <ProductCard product={laptopDetails} />
     </Grid>
   );
 }

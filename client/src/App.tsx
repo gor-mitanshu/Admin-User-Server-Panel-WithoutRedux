@@ -12,7 +12,7 @@ import UpdateProfile from "./components/Profile/UpdateProfile";
 import SideChangePassword from "./components/SidebarChangePassword/SideChangePassword";
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
 import UserVerification from "./components/Authentication/UserVerification/UserVerification";
-import PaymentSuccess from "./components/Payment/PaymentSuccess/PaymentSuccess";
+import PaymentSuccess from "./components/Payment/PaymentStatus/PaymentSuccessModal";
 import Payment from "./components/Payment/Payment";
 
 function App() {
