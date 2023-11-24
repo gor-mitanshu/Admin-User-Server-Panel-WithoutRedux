@@ -5,7 +5,8 @@ import ProductCard from "./ProductCard";
 function Payment() {
   const laptopDetails = {
     name: "Laptop",
-    price: 600,
+    // price: 600 * 100,
+    price: 6000,
     image:
       "https://cdn.shopify.com/s/files/1/1684/4603/products/MacBookPro13_Mid2012_NonRetina_Silver.png",
   };

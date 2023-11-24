@@ -12,8 +12,8 @@ import UpdateProfile from "./components/Profile/UpdateProfile";
 import SideChangePassword from "./components/SidebarChangePassword/SideChangePassword";
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
 import UserVerification from "./components/Authentication/UserVerification/UserVerification";
-import PaymentSuccess from "./components/Payment/PaymentStatus/PaymentSuccessModal";
 import Payment from "./components/Payment/Payment";
+// import PaymentSuccess from "./components/Payment/PaymentStatus/PaymentSuccessModal";
 
 function App() {
   const ProtectedRoutes = ProtectedRoute();
@@ -79,8 +79,15 @@ function App() {
               </ProtectedRoutes>
             }
           />
-          <Route path="/payment" element={<Payment />} />
-          <Route path="/paymentsuccess" element={<PaymentSuccess />} />
+          <Route
+            path="/payment"
+            element={
+              <ProtectedRoutes>
+                <Payment />
+              </ProtectedRoutes>
+            }
+          />
+          {/* <Route path="/paymentsuccess" element={<PaymentSuccess />} /> */}
         </Route>
       </Routes>
     </div>

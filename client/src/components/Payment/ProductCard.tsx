@@ -70,8 +70,10 @@ const ProductCard = ({ product }: any) => {
         userEmail: email,
       });
 
+      console.log(order);
       const options = {
         key: process.env.REACT_APP_KEY_ID,
+        // amount: order.amount * 100,
         amount: order.amount,
         currency: "INR",
         name: product.name,
@@ -89,6 +91,9 @@ const ProductCard = ({ product }: any) => {
             razorpay_order_id: response.razorpay_order_id,
             razorpay_signature: response.razorpay_signature,
             uid: data._id,
+            firstname: data.firstname,
+            lastname: data.lastname,
+            email: data.email,
             amount: order.amount,
             order_id: order.id,
             currency: order.currency,
@@ -102,7 +107,7 @@ const ProductCard = ({ product }: any) => {
             `${process.env.REACT_APP_API}/getRazorPaydetails`,
             body
           );
-
+          console.log(res);
           if (!!res && res.data.success) {
             setPaymentDetails(res.data.data);
             setReferenceNum(res.data.data.razorpay_order_id);
@@ -122,7 +127,9 @@ const ProductCard = ({ product }: any) => {
       };
 
       const razor = (window as any).Razorpay(options);
-      razor.open();
+      if (razor) {
+        razor.open();
+      }
     } catch (error) {
       console.log(error);
       setPaymentStatus("error");
