@@ -1588,7 +1588,7 @@ app.post('/getRazorPaydetails', async (req, res) => {
 
       <p>
         Thank you for your payment. Your payment of
-        <strong style="color: red">${amount / 100} ₹</strong> has been
+        <strong style="color: red"> ₹ ${amount / 100}</strong> has been
         successfully processed.
       </p>
 
@@ -1596,7 +1596,7 @@ app.post('/getRazorPaydetails', async (req, res) => {
 
       <ul>
         <li><strong>Order ID:</strong> ${order_id}</li>
-        <li><strong>Amount Paid:</strong> ${amount / 100} ₹ INR</li>
+        <li><strong>Amount Paid:</strong> ₹ ${amount / 100} INR</li>
       </ul>
 
       <p>Thank you for choosing our services!</p>
@@ -1719,7 +1719,7 @@ app.post('/getRazorPaydetails', async (req, res) => {
 
       <p>
         We're sorry, but your payment of
-        <strong style="color: red">${amount / 100} ₹</strong> could not be
+        <strong style="color: red">₹ ${amount / 100}</strong> could not be
         processed successfully.
       </p>
 
@@ -1727,7 +1727,7 @@ app.post('/getRazorPaydetails', async (req, res) => {
 
       <ul>
         <li><strong>Order ID:</strong> ${order_id}</li>
-        <li><strong>Amount Attempted:</strong> ${amount / 100} ₹ INR</li>
+        <li><strong>Amount Attempted:</strong>₹ ${amount / 100} INR</li>
       </ul>
 
       <p>Contact your payment provider or try again later.</p>
